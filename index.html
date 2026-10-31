@@ -3,275 +3,229 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trust Gateway - Dashboard</title>
-    <!-- Tailwind CSS -->
+    <title>Trust Gateway - Secure Personal Wallet</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <style>
-        /* Glassmorphism Effect */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
         .glass-card {
-            background: rgba(255, 255, 255, 0.7);
+            background: rgba(220, 38, 38, 0.05);
             backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 0 8px 32px 0 rgba(239, 68, 68, 0.08);
-        }
-        .glass-icon-btn {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 1);
-            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.08);
-            transition: all 0.2s ease-in-out;
-        }
-        .glass-icon-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(220, 38, 38, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.15);
         }
         .glass-modal {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
+            background: rgba(15, 15, 15, 0.88);
+            backdrop-filter: blur(24px);
             border: 1px solid rgba(239, 68, 68, 0.3);
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans min-h-screen pb-10">
+<body class="bg-gradient-to-br from-neutral-950 via-zinc-900 to-red-950 text-white min-h-screen font-sans">
 
-    <!-- Top Navigation Bar -->
-    <header class="max-w-md mx-auto pt-6 px-4 flex justify-between items-center">
-        <div class="flex items-center space-x-3">
-            <button onclick="openAdminModal()" class="w-10 h-10 glass-icon-btn rounded-xl flex items-center justify-center text-slate-700" title="Admin Panel">
-                <i class="fa-solid fa-bars text-lg"></i>
-            </button>
-            <h1 class="text-xl font-bold text-slate-800">Dashboard</h1>
-        </div>
-        <div class="flex space-x-2">
-            <button onclick="openAdminModal()" class="w-10 h-10 glass-icon-btn rounded-xl flex items-center justify-center text-slate-700" title="Settings">
-                <i class="fa-solid fa-gear"></i>
-            </button>
-            <button onclick="alert('Support: Contact admin@trustgateway.com')" class="w-10 h-10 glass-icon-btn rounded-xl flex items-center justify-center text-slate-700" title="Support">
-                <i class="fa-solid fa-headset"></i>
-            </button>
-        </div>
-    </header>
-
-    <!-- Main Container -->
-    <main class="max-w-md mx-auto px-4 mt-6">
-
-        <!-- Total Balance Banner Card (Red Theme) -->
-        <div class="bg-gradient-to-r from-red-600 to-rose-500 rounded-3xl p-6 text-white shadow-xl shadow-red-500/20 relative overflow-hidden mb-6">
-            <!-- Background Decorative Overlay -->
-            <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
-            
-            <div class="flex justify-between items-start">
-                <div>
-                    <div class="flex items-center space-x-2 text-red-100 text-xs font-semibold tracking-wider">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>TOTAL BALANCE</span>
+    <div class="flex h-screen overflow-hidden">
+        
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="fixed md:static inset-y-0 left-0 z-50 w-64 glass-panel border-r border-red-500/20 transform -translate-x-full md:translate-x-0 transition-transform duration-300 flex flex-col justify-between p-6">
+            <div>
+                <!-- App Logo/Header -->
+                <div class="flex items-center justify-between mb-8">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-red-600 to-red-500 flex items-center justify-center font-bold text-lg shadow-lg shadow-red-600/30">TG</div>
+                        <span class="text-lg font-bold tracking-wider text-red-500">Trust Gateway</span>
                     </div>
-                    <h2 id="display-balance" class="text-3xl font-black mt-2">₹24,580.00</h2>
-                    
-                    <!-- Month badge -->
-                    <div class="inline-flex items-center bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs text-white mt-4 border border-white/20">
-                        <i class="fa-solid fa-arrow-trend-up mr-1.5 text-xs"></i>
-                        <span>₹1,200.00 this month</span>
-                    </div>
-                </div>
-
-                <!-- Add Money Button -->
-                <button onclick="addMoney()" class="flex flex-col items-center group">
-                    <div class="w-14 h-14 bg-white/20 hover:bg-white/30 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/30 shadow-lg transition duration-200">
-                        <i class="fa-solid fa-plus text-2xl text-white"></i>
-                    </div>
-                    <span class="text-[11px] mt-1.5 text-red-100 font-medium">Add Money</span>
-                </button>
-            </div>
-        </div>
-
-        <!-- Quick Action Grid (8 Glass Buttons) -->
-        <div class="grid grid-cols-4 gap-3 mb-6">
-            
-            <!-- Send -->
-            <button onclick="alert('Send Money feature is ready.')" class="glass-icon-btn rounded-2xl p-3 flex flex-col items-center justify-center">
-                <div class="w-11 h-11 rounded-full bg-red-100 text-red-600 flex items-center justify-center mb-2 text-lg shadow-inner">
-                    <i class="fa-solid fa-arrow-up"></i>
-                </div>
-                <span class="text-xs font-semibold text-slate-700">Send</span>
-            </button>
-
-            <!-- Bulk Pay -->
-            <button onclick="alert('Bulk Pay feature is ready.')" class="glass-icon-btn rounded-2xl p-3 flex flex-col items-center justify-center">
-                <div class="w-11 h-11 rounded-full bg-red-100 text-red-600 flex items-center justify-center mb-2 text-lg shadow-inner">
-                    <i class="fa-solid fa-layer-group"></i>
-                </div>
-                <span class="text-xs font-semibold text-slate-700">Bulk Pay</span>
-            </button>
-
-            <!-- History -->
-            <button onclick="alert('Recent Transactions: +₹1,200 (Client), -₹450 (Withdrawal)')" class="glass-icon-btn rounded-2xl p-3 flex flex-col items-center justify-center">
-                <div class="w-11 h-11 rounded-full bg-red-100 text-red-600 flex items-center justify-center mb-2 text-lg shadow-inner">
-                    <i class="fa-solid fa-right-left"></i>
-                </div>
-                <span class="text-xs font-semibold text-slate-700">History</span>
-            </button>
-
-            <!-- API Doc -->
-            <button onclick="alert('API Documentation link opened.')" class="glass-icon-btn rounded-2xl p-3 flex flex-col items-center justify-center">
-                <div class="w-11 h-11 rounded-full bg-red-100 text-red-600 flex items-center justify-center mb-2 text-lg shadow-inner">
-                    <i class="fa-solid fa-code"></i>
-                </div>
-                <span class="text-xs font-semibold text-slate-700">API Doc</span>
-            </button>
-
-            <!-- Manuals -->
-            <button onclick="alert('User Manuals opened.')" class="glass-icon-btn rounded-2xl p-3 flex flex-col items-center justify-center">
-                <div class="w-11 h-11 rounded-full bg-red-100 text-red-600 flex items-center justify-center mb-2 text-lg shadow-inner">
-                    <i class="fa-solid fa-book-open"></i>
-                </div>
-                <span class="text-xs font-semibold text-slate-700">Manuals</span>
-            </button>
-
-            <!-- Withdraw -->
-            <button onclick="openWithdrawModal()" class="glass-icon-btn rounded-2xl p-3 flex flex-col items-center justify-center">
-                <div class="w-11 h-11 rounded-full bg-red-100 text-red-600 flex items-center justify-center mb-2 text-lg shadow-inner">
-                    <i class="fa-solid fa-indian-rupee-sign"></i>
-                </div>
-                <span class="text-xs font-semibold text-slate-700">Withdraw</span>
-            </button>
-
-            <!-- Redeem -->
-            <button onclick="alert('Redeem vouchers feature active.')" class="glass-icon-btn rounded-2xl p-3 flex flex-col items-center justify-center">
-                <div class="w-11 h-11 rounded-full bg-red-100 text-red-600 flex items-center justify-center mb-2 text-lg shadow-inner">
-                    <i class="fa-solid fa-gift"></i>
-                </div>
-                <span class="text-xs font-semibold text-slate-700">Redeem</span>
-            </button>
-
-            <!-- Profile -->
-            <button onclick="alert('User: John Doe | Verified Status: Active')" class="glass-icon-btn rounded-2xl p-3 flex flex-col items-center justify-center">
-                <div class="w-11 h-11 rounded-full bg-red-100 text-red-600 flex items-center justify-center mb-2 text-lg shadow-inner">
-                    <i class="fa-solid fa-user"></i>
-                </div>
-                <span class="text-xs font-semibold text-slate-700">Profile</span>
-            </button>
-
-        </div>
-
-        <!-- Activity Graph Card (Glass Box) -->
-        <div class="glass-card rounded-3xl p-5 mb-6">
-            <div class="flex justify-between items-center mb-4">
-                <span class="font-bold text-sm tracking-wide text-slate-700 uppercase">ACTIVITY</span>
-                
-                <div class="flex items-center space-x-3 text-xs">
-                    <div class="flex items-center space-x-1">
-                        <span class="w-2.5 h-2.5 rounded-full bg-red-500"></span>
-                        <span class="text-slate-500">Credit</span>
-                    </div>
-                    <div class="flex items-center space-x-1">
-                        <span class="w-2.5 h-2.5 rounded-full bg-rose-300"></span>
-                        <span class="text-slate-500">Debit</span>
-                    </div>
-
-                    <!-- Filter Tabs -->
-                    <div class="bg-slate-200/80 p-1 rounded-xl flex space-x-1 ml-2">
-                        <button class="bg-red-600 text-white text-[10px] px-2.5 py-1 rounded-lg font-bold shadow-sm">7D</button>
-                        <button class="text-slate-600 text-[10px] px-2.5 py-1 rounded-lg font-bold">30D</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Simple Graphical Representation -->
-            <div class="pt-4 pb-2 border-t border-slate-200/60">
-                <div class="h-24 flex items-center justify-between relative px-2">
-                    <!-- Flat Zero Line -->
-                    <div class="absolute w-full h-[2px] bg-red-500/40 top-1/2 transform -translate-y-1/2"></div>
-                    
-                    <!-- Graph Dots -->
-                    <div class="w-2.5 h-2.5 bg-red-600 rounded-full z-10 shadow-md"></div>
-                    <div class="w-2.5 h-2.5 bg-red-600 rounded-full z-10 shadow-md"></div>
-                    <div class="w-2.5 h-2.5 bg-red-600 rounded-full z-10 shadow-md"></div>
-                    <div class="w-2.5 h-2.5 bg-red-600 rounded-full z-10 shadow-md"></div>
-                    <div class="w-2.5 h-2.5 bg-red-600 rounded-full z-10 shadow-md"></div>
-                    <div class="w-2.5 h-2.5 bg-red-600 rounded-full z-10 shadow-md"></div>
-                    <div class="w-2.5 h-2.5 bg-red-600 rounded-full z-10 shadow-md"></div>
+                    <button onclick="toggleSidebar()" class="md:hidden text-gray-400 hover:text-white">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
                 </div>
                 
-                <!-- Days Axis -->
-                <div class="flex justify-between text-[11px] text-slate-400 font-medium px-1 mt-1">
-                    <span>Sun</span>
-                    <span>Mon</span>
-                    <span>Tue</span>
-                    <span>Wed</span>
-                    <span>Thu</span>
-                    <span>Fri</span>
-                    <span>Sat</span>
+                <!-- Profile Section in Sidebar -->
+                <div class="glass-card p-4 rounded-xl mb-6 flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center font-bold text-red-400 border border-red-500/30">
+                        JD
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-sm">John Doe</h4>
+                        <span class="text-xs text-red-400">Verified User</span>
+                    </div>
+                </div>
+
+                <!-- Sidebar Menu Items -->
+                <nav class="space-y-2">
+                    <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center space-x-3 p-3 rounded-xl bg-red-600/20 text-red-400 border border-red-500/30 transition text-left">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                        <span class="font-medium text-sm">Dashboard</span>
+                    </button>
+
+                    <button onclick="openWithdrawModal()" class="w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-white/5 text-gray-300 transition text-left">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        <span class="font-medium text-sm">Withdraw</span>
+                    </button>
+
+                    <button onclick="switchTab('admin')" id="nav-admin" class="w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-white/5 text-gray-300 transition text-left">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
+                        <span class="font-medium text-sm">Admin Panel</span>
+                    </button>
+                </nav>
+            </div>
+            
+            <div class="text-xs text-gray-500 text-center">
+                Trust Gateway &copy; 2026
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 flex flex-col overflow-y-auto">
+            
+            <!-- Top Header -->
+            <header class="glass-panel border-b border-red-500/20 p-4 md:px-8 flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <button onclick="toggleSidebar()" class="md:hidden text-red-500">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    </button>
+                    <h1 id="page-title" class="text-lg md:text-xl font-bold text-red-500">Wallet Dashboard</h1>
+                </div>
+
+                <div class="flex items-center space-x-3">
+                    <button onclick="openWithdrawModal()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl text-xs md:text-sm font-semibold shadow-lg shadow-red-600/30 transition">
+                        Withdraw
+                    </button>
+                </div>
+            </header>
+
+            <!-- MAIN ORIGINAL DASHBOARD VIEW -->
+            <div id="tab-dashboard" class="p-4 md:p-8 space-y-6">
+                
+                <!-- Main Balance Card -->
+                <div class="glass-card p-6 rounded-2xl shadow-xl relative overflow-hidden">
+                    <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-red-600/10 rounded-full blur-3xl"></div>
+                    <p class="text-xs text-gray-400 uppercase tracking-wider">Total Balance</p>
+                    <h2 id="display-balance" class="text-4xl md:text-5xl font-extrabold text-white mt-2">$24,580.00</h2>
+                    <div class="flex space-x-4 mt-6">
+                        <button onclick="openWithdrawModal()" class="bg-red-600 hover:bg-red-700 px-5 py-2.5 rounded-xl font-medium text-xs md:text-sm transition shadow-md shadow-red-600/40">Withdraw</button>
+                        <button class="glass-panel hover:bg-white/10 px-5 py-2.5 rounded-xl font-medium text-xs md:text-sm transition">Deposit</button>
+                    </div>
+                </div>
+
+                <!-- Recent Activities Section -->
+                <div class="glass-panel p-6 rounded-2xl">
+                    <h3 class="text-md font-bold mb-4 text-red-400">Recent Transactions</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center p-3 rounded-xl bg-white/5 border border-white/5">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-9 h-9 rounded-lg bg-green-500/20 flex items-center justify-center text-green-400">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-xs md:text-sm">Payment Received</h4>
+                                    <span class="text-[10px] text-gray-400">Today, 10:45 AM</span>
+                                </div>
+                            </div>
+                            <span class="text-green-400 font-bold text-xs md:text-sm">+$1,200.00</span>
+                        </div>
+
+                        <div class="flex justify-between items-center p-3 rounded-xl bg-white/5 border border-white/5">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-9 h-9 rounded-lg bg-red-500/20 flex items-center justify-center text-red-400">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-xs md:text-sm">Withdrawal Sent</h4>
+                                    <span class="text-[10px] text-gray-400">Yesterday, 04:15 PM</span>
+                                </div>
+                            </div>
+                            <span class="text-red-400 font-bold text-xs md:text-sm">-$450.00</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ADMIN CONTROL VIEW (Integrated in Sidebar) -->
+            <div id="tab-admin" class="p-4 md:p-8 space-y-6 hidden">
+                <div class="glass-panel p-6 rounded-2xl border border-red-500/30">
+                    <h3 class="text-md font-bold mb-4 text-red-500 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                        <span>Admin Control Center</span>
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="glass-card p-4 rounded-xl space-y-3">
+                            <h4 class="font-semibold text-sm">Add/Remove User Balance</h4>
+                            <input type="number" id="admin-amount" placeholder="Enter Amount ($)" class="w-full bg-black/40 border border-red-500/30 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-red-500">
+                            <button onclick="adminUpdateBalance()" class="w-full bg-red-600 hover:bg-red-700 py-2.5 rounded-xl font-semibold text-xs transition">Update Balance</button>
+                        </div>
+
+                        <div class="glass-card p-4 rounded-xl space-y-3">
+                            <h4 class="font-semibold text-sm">Withdraw Limit Settings</h4>
+                            <input type="number" id="min-withdraw" value="50" class="w-full bg-black/40 border border-red-500/30 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-red-500">
+                            <button onclick="saveAdminSettings()" class="w-full glass-panel hover:bg-white/10 py-2.5 rounded-xl font-semibold text-xs transition">Save Minimum Limit</button>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-    </main>
+        </main>
+    </div>
 
-    <!-- WITHDRAW MODAL -->
-    <div id="withdrawModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-        <div class="glass-modal w-full max-w-sm p-6 rounded-3xl shadow-2xl relative border border-red-500/30">
+    <!-- Withdraw Modal (Pop-up overlay screen) -->
+    <div id="withdrawModal" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4 z-50">
+        <div class="glass-modal w-full max-w-md p-6 rounded-2xl border border-red-500/40 relative shadow-2xl">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold text-red-600"><i class="fa-solid fa-indian-rupee-sign mr-2"></i>Withdraw Funds</h3>
-                <button onclick="closeWithdrawModal()" class="text-slate-400 hover:text-slate-700 font-bold text-xl">&times;</button>
+                <h3 class="text-md font-bold text-red-500">Withdraw Funds</h3>
+                <button onclick="closeWithdrawModal()" class="text-gray-400 hover:text-white font-bold text-lg">&times;</button>
             </div>
             
             <form onsubmit="handleWithdraw(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Enter Amount (₹)</label>
-                    <input type="number" id="withdraw-input" required placeholder="0.00" class="w-full bg-slate-100 border border-slate-300 rounded-xl p-3 text-sm text-slate-800 focus:outline-none focus:border-red-500 font-bold">
+                    <label class="block text-xs text-gray-300 mb-1">Enter Amount ($)</label>
+                    <input type="number" id="withdraw-input" required placeholder="0.00" class="w-full bg-black/40 border border-red-500/30 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-red-500">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Select Bank / UPI</label>
-                    <select class="w-full bg-slate-100 border border-slate-300 rounded-xl p-3 text-sm text-slate-800 focus:outline-none focus:border-red-500">
-                        <option>HDFC Bank Account (*1234)</option>
-                        <option>Google Pay UPI (user@oksbi)</option>
+                    <label class="block text-xs text-gray-300 mb-1">Select Gateway</label>
+                    <select class="w-full bg-black/40 border border-red-500/30 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-red-500">
+                        <option class="bg-neutral-900">Bank Account (*1234)</option>
+                        <option class="bg-neutral-900">USDT Wallet</option>
                     </select>
                 </div>
-                <button type="submit" class="w-full bg-gradient-to-r from-red-600 to-rose-500 hover:from-red-700 hover:to-rose-600 text-white py-3 rounded-xl font-bold text-sm shadow-lg shadow-red-500/30 transition">Confirm Withdrawal</button>
+                <button type="submit" class="w-full bg-red-600 hover:bg-red-700 py-3 rounded-xl font-semibold text-xs md:text-sm shadow-lg shadow-red-600/40 transition">Submit Withdrawal</button>
             </form>
         </div>
     </div>
 
-    <!-- ADMIN PANEL MODAL -->
-    <div id="adminModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-        <div class="glass-modal w-full max-w-sm p-6 rounded-3xl shadow-2xl relative border border-red-500/30">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold text-red-600"><i class="fa-solid fa-shield-halved mr-2"></i>Admin Control Panel</h3>
-                <button onclick="closeAdminModal()" class="text-slate-400 hover:text-slate-700 font-bold text-xl">&times;</button>
-            </div>
-            
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Add/Deduct Balance (₹)</label>
-                    <input type="number" id="admin-amount" placeholder="5000" class="w-full bg-slate-100 border border-slate-300 rounded-xl p-3 text-sm text-slate-800 focus:outline-none focus:border-red-500 font-bold">
-                    <button onclick="adminUpdateBalance()" class="w-full mt-2 bg-slate-800 hover:bg-slate-900 text-white py-2.5 rounded-xl font-bold text-xs transition">Update Wallet Balance</button>
-                </div>
-                <hr class="border-slate-200">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Minimum Withdrawal Limit (₹)</label>
-                    <input type="number" id="min-limit" value="100" class="w-full bg-slate-100 border border-slate-300 rounded-xl p-3 text-sm text-slate-800 focus:outline-none focus:border-red-500 font-bold">
-                    <button onclick="saveAdminLimit()" class="w-full mt-2 bg-red-600 hover:bg-red-700 text-white py-2.5 rounded-xl font-bold text-xs transition">Save Limit Settings</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- JavaScript Logic -->
+    <!-- JavaScript Navigation & Functionality -->
     <script>
         let currentBalance = 24580.00;
-        let minWithdrawLimit = 100;
+        let minLimit = 50;
 
-        function addMoney() {
-            let amt = prompt("Enter amount to add (₹):", "1000");
-            if (amt && !isNaN(amt)) {
-                currentBalance += parseFloat(amt);
-                updateBalanceDisplay();
-                alert("Successfully added ₹" + amt + " to your wallet!");
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('-translate-x-full');
+        }
+
+        function switchTab(tab) {
+            const dashTab = document.getElementById('tab-dashboard');
+            const adminTab = document.getElementById('tab-admin');
+            const navDash = document.getElementById('nav-dashboard');
+            const navAdmin = document.getElementById('nav-admin');
+            const pageTitle = document.getElementById('page-title');
+
+            if (tab === 'dashboard') {
+                dashTab.classList.remove('hidden');
+                adminTab.classList.add('hidden');
+                navDash.className = "w-full flex items-center space-x-3 p-3 rounded-xl bg-red-600/20 text-red-400 border border-red-500/30 transition text-left";
+                navAdmin.className = "w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-white/5 text-gray-300 transition text-left";
+                pageTitle.innerText = "Wallet Dashboard";
+            } else if (tab === 'admin') {
+                dashTab.classList.add('hidden');
+                adminTab.classList.remove('hidden');
+                navAdmin.className = "w-full flex items-center space-x-3 p-3 rounded-xl bg-red-600/20 text-red-400 border border-red-500/30 transition text-left";
+                navDash.className = "w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-white/5 text-gray-300 transition text-left";
+                pageTitle.innerText = "Admin Control Panel";
             }
+            if(window.innerWidth < 768) toggleSidebar();
         }
 
         function openWithdrawModal() {
@@ -284,57 +238,304 @@
             document.getElementById('withdrawModal').classList.add('hidden');
         }
 
-        function handleWithdraw(event) {
-            event.preventDefault();
-            let amt = parseFloat(document.getElementById('withdraw-input').value);
-            
-            if (amt < minWithdrawLimit) {
-                alert("Error: Minimum withdrawal limit is ₹" + minWithdrawLimit);
-                return;
-            }
-            if (amt > currentBalance) {
-                alert("Error: Insufficient balance in wallet!");
-                return;
-            }
-
+        function handleWithdraw(e) {
+            e.preventDefault();
+            const amt = parseFloat(document.getElementById('withdraw-input').value);
+            if(amt < minLimit) { alert('Minimum withdrawal limit is $' + minLimit); return; }
+            if(amt > currentBalance) { alert('Insufficient Balance!'); return; }
             currentBalance -= amt;
-            updateBalanceDisplay();
-            alert("Withdrawal request of ₹" + amt + " processed successfully!");
+            document.getElementById('display-balance').innerText = '$' + currentBalance.toLocaleString('en-US', {minimumFractionDigits: 2});
+            alert('Withdrawal request submitted!');
             closeWithdrawModal();
         }
 
-        function openAdminModal() {
-            document.getElementById('adminModal').classList.remove('hidden');
-            document.getElementById('adminModal').classList.add('flex');
-        }
-
-        function closeAdminModal() {
-            document.getElementById('adminModal').classList.remove('flex');
-            document.getElementById('adminModal').classList.add('hidden');
-        }
-
         function adminUpdateBalance() {
-            let val = parseFloat(document.getElementById('admin-amount').value);
-            if (!isNaN(val)) {
+            const val = parseFloat(document.getElementById('admin-amount').value);
+            if(!isNaN(val)) {
                 currentBalance += val;
-                updateBalanceDisplay();
-                alert("Admin successfully updated balance by ₹" + val);
-                closeAdminModal();
+                document.getElementById('display-balance').innerText = '$' + currentBalance.toLocaleString('en-US', {minimumFractionDigits: 2});
+                alert('Balance updated by Admin!');
             }
         }
 
-        function saveAdminLimit() {
-            let limit = parseFloat(document.getElementById('min-limit').value);
-            if (!isNaN(limit)) {
-                minWithdrawLimit = limit;
-                alert("New minimum withdrawal limit saved: ₹" + minWithdrawLimit);
-                closeAdminModal();
+        function saveAdminSettings() {
+            const limit = parseFloat(document.getElementById('min-withdraw').value);
+            if(!isNaN(limit)) {
+                minLimit = limit;
+                alert('Minimum withdraw limit set to $' + minLimit);
             }
-        }
-
-        function updateBalanceDisplay() {
-            document.getElementById('display-balance').innerText = "₹" + currentBalance.toLocaleString('en-IN', {minimumFractionDigits: 2});
         }
     </script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trust Gateway - Secure Personal Wallet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glass-card {
+            background: rgba(220, 38, 38, 0.05);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(239, 68, 68, 0.15);
+        }
+        .glass-modal {
+            background: rgba(15, 15, 15, 0.88);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-neutral-950 via-zinc-900 to-red-950 text-white min-h-screen font-sans">
+
+    <div class="flex h-screen overflow-hidden">
+        
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="fixed md:static inset-y-0 left-0 z-50 w-64 glass-panel border-r border-red-500/20 transform -translate-x-full md:translate-x-0 transition-transform duration-300 flex flex-col justify-between p-6">
+            <div>
+                <!-- App Logo/Header -->
+                <div class="flex items-center justify-between mb-8">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-red-600 to-red-500 flex items-center justify-center font-bold text-lg shadow-lg shadow-red-600/30">TG</div>
+                        <span class="text-lg font-bold tracking-wider text-red-500">Trust Gateway</span>
+                    </div>
+                    <button onclick="toggleSidebar()" class="md:hidden text-gray-400 hover:text-white">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+                
+                <!-- Profile Section in Sidebar -->
+                <div class="glass-card p-4 rounded-xl mb-6 flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center font-bold text-red-400 border border-red-500/30">
+                        JD
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-sm">John Doe</h4>
+                        <span class="text-xs text-red-400">Verified User</span>
+                    </div>
+                </div>
+
+                <!-- Sidebar Menu Items -->
+                <nav class="space-y-2">
+                    <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center space-x-3 p-3 rounded-xl bg-red-600/20 text-red-400 border border-red-500/30 transition text-left">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                        <span class="font-medium text-sm">Dashboard</span>
+                    </button>
+
+                    <button onclick="openWithdrawModal()" class="w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-white/5 text-gray-300 transition text-left">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        <span class="font-medium text-sm">Withdraw</span>
+                    </button>
+
+                    <button onclick="switchTab('admin')" id="nav-admin" class="w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-white/5 text-gray-300 transition text-left">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
+                        <span class="font-medium text-sm">Admin Panel</span>
+                    </button>
+                </nav>
+            </div>
+            
+            <div class="text-xs text-gray-500 text-center">
+                Trust Gateway &copy; 2026
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 flex flex-col overflow-y-auto">
+            
+            <!-- Top Header -->
+            <header class="glass-panel border-b border-red-500/20 p-4 md:px-8 flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <button onclick="toggleSidebar()" class="md:hidden text-red-500">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    </button>
+                    <h1 id="page-title" class="text-lg md:text-xl font-bold text-red-500">Wallet Dashboard</h1>
+                </div>
+
+                <div class="flex items-center space-x-3">
+                    <button onclick="openWithdrawModal()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl text-xs md:text-sm font-semibold shadow-lg shadow-red-600/30 transition">
+                        Withdraw
+                    </button>
+                </div>
+            </header>
+
+            <!-- MAIN ORIGINAL DASHBOARD VIEW -->
+            <div id="tab-dashboard" class="p-4 md:p-8 space-y-6">
+                
+                <!-- Main Balance Card -->
+                <div class="glass-card p-6 rounded-2xl shadow-xl relative overflow-hidden">
+                    <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-red-600/10 rounded-full blur-3xl"></div>
+                    <p class="text-xs text-gray-400 uppercase tracking-wider">Total Balance</p>
+                    <h2 id="display-balance" class="text-4xl md:text-5xl font-extrabold text-white mt-2">$24,580.00</h2>
+                    <div class="flex space-x-4 mt-6">
+                        <button onclick="openWithdrawModal()" class="bg-red-600 hover:bg-red-700 px-5 py-2.5 rounded-xl font-medium text-xs md:text-sm transition shadow-md shadow-red-600/40">Withdraw</button>
+                        <button class="glass-panel hover:bg-white/10 px-5 py-2.5 rounded-xl font-medium text-xs md:text-sm transition">Deposit</button>
+                    </div>
+                </div>
+
+                <!-- Recent Activities Section -->
+                <div class="glass-panel p-6 rounded-2xl">
+                    <h3 class="text-md font-bold mb-4 text-red-400">Recent Transactions</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center p-3 rounded-xl bg-white/5 border border-white/5">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-9 h-9 rounded-lg bg-green-500/20 flex items-center justify-center text-green-400">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-xs md:text-sm">Payment Received</h4>
+                                    <span class="text-[10px] text-gray-400">Today, 10:45 AM</span>
+                                </div>
+                            </div>
+                            <span class="text-green-400 font-bold text-xs md:text-sm">+$1,200.00</span>
+                        </div>
+
+                        <div class="flex justify-between items-center p-3 rounded-xl bg-white/5 border border-white/5">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-9 h-9 rounded-lg bg-red-500/20 flex items-center justify-center text-red-400">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-xs md:text-sm">Withdrawal Sent</h4>
+                                    <span class="text-[10px] text-gray-400">Yesterday, 04:15 PM</span>
+                                </div>
+                            </div>
+                            <span class="text-red-400 font-bold text-xs md:text-sm">-$450.00</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ADMIN CONTROL VIEW (Integrated in Sidebar) -->
+            <div id="tab-admin" class="p-4 md:p-8 space-y-6 hidden">
+                <div class="glass-panel p-6 rounded-2xl border border-red-500/30">
+                    <h3 class="text-md font-bold mb-4 text-red-500 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                        <span>Admin Control Center</span>
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="glass-card p-4 rounded-xl space-y-3">
+                            <h4 class="font-semibold text-sm">Add/Remove User Balance</h4>
+                            <input type="number" id="admin-amount" placeholder="Enter Amount ($)" class="w-full bg-black/40 border border-red-500/30 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-red-500">
+                            <button onclick="adminUpdateBalance()" class="w-full bg-red-600 hover:bg-red-700 py-2.5 rounded-xl font-semibold text-xs transition">Update Balance</button>
+                        </div>
+
+                        <div class="glass-card p-4 rounded-xl space-y-3">
+                            <h4 class="font-semibold text-sm">Withdraw Limit Settings</h4>
+                            <input type="number" id="min-withdraw" value="50" class="w-full bg-black/40 border border-red-500/30 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-red-500">
+                            <button onclick="saveAdminSettings()" class="w-full glass-panel hover:bg-white/10 py-2.5 rounded-xl font-semibold text-xs transition">Save Minimum Limit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Withdraw Modal (Pop-up overlay screen) -->
+    <div id="withdrawModal" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4 z-50">
+        <div class="glass-modal w-full max-w-md p-6 rounded-2xl border border-red-500/40 relative shadow-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-md font-bold text-red-500">Withdraw Funds</h3>
+                <button onclick="closeWithdrawModal()" class="text-gray-400 hover:text-white font-bold text-lg">&times;</button>
+            </div>
+            
+            <form onsubmit="handleWithdraw(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs text-gray-300 mb-1">Enter Amount ($)</label>
+                    <input type="number" id="withdraw-input" required placeholder="0.00" class="w-full bg-black/40 border border-red-500/30 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-red-500">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-300 mb-1">Select Gateway</label>
+                    <select class="w-full bg-black/40 border border-red-500/30 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-red-500">
+                        <option class="bg-neutral-900">Bank Account (*1234)</option>
+                        <option class="bg-neutral-900">USDT Wallet</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full bg-red-600 hover:bg-red-700 py-3 rounded-xl font-semibold text-xs md:text-sm shadow-lg shadow-red-600/40 transition">Submit Withdrawal</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript Navigation & Functionality -->
+    <script>
+        let currentBalance = 24580.00;
+        let minLimit = 50;
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('-translate-x-full');
+        }
+
+        function switchTab(tab) {
+            const dashTab = document.getElementById('tab-dashboard');
+            const adminTab = document.getElementById('tab-admin');
+            const navDash = document.getElementById('nav-dashboard');
+            const navAdmin = document.getElementById('nav-admin');
+            const pageTitle = document.getElementById('page-title');
+
+            if (tab === 'dashboard') {
+                dashTab.classList.remove('hidden');
+                adminTab.classList.add('hidden');
+                navDash.className = "w-full flex items-center space-x-3 p-3 rounded-xl bg-red-600/20 text-red-400 border border-red-500/30 transition text-left";
+                navAdmin.className = "w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-white/5 text-gray-300 transition text-left";
+                pageTitle.innerText = "Wallet Dashboard";
+            } else if (tab === 'admin') {
+                dashTab.classList.add('hidden');
+                adminTab.classList.remove('hidden');
+                navAdmin.className = "w-full flex items-center space-x-3 p-3 rounded-xl bg-red-600/20 text-red-400 border border-red-500/30 transition text-left";
+                navDash.className = "w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-white/5 text-gray-300 transition text-left";
+                pageTitle.innerText = "Admin Control Panel";
+            }
+            if(window.innerWidth < 768) toggleSidebar();
+        }
+
+        function openWithdrawModal() {
+            document.getElementById('withdrawModal').classList.remove('hidden');
+            document.getElementById('withdrawModal').classList.add('flex');
+        }
+
+        function closeWithdrawModal() {
+            document.getElementById('withdrawModal').classList.remove('flex');
+            document.getElementById('withdrawModal').classList.add('hidden');
+        }
+
+        function handleWithdraw(e) {
+            e.preventDefault();
+            const amt = parseFloat(document.getElementById('withdraw-input').value);
+            if(amt < minLimit) { alert('Minimum withdrawal limit is $' + minLimit); return; }
+            if(amt > currentBalance) { alert('Insufficient Balance!'); return; }
+            currentBalance -= amt;
+            document.getElementById('display-balance').innerText = '$' + currentBalance.toLocaleString('en-US', {minimumFractionDigits: 2});
+            alert('Withdrawal request submitted!');
+            closeWithdrawModal();
+        }
+
+        function adminUpdateBalance() {
+            const val = parseFloat(document.getElementById('admin-amount').value);
+            if(!isNaN(val)) {
+                currentBalance += val;
+                document.getElementById('display-balance').innerText = '$' + currentBalance.toLocaleString('en-US', {minimumFractionDigits: 2});
+                alert('Balance updated by Admin!');
+            }
+        }
+
+        function saveAdminSettings() {
+            const limit = parseFloat(document.getElementById('min-withdraw').value);
+            if(!isNaN(limit)) {
+                minLimit = limit;
+                alert('Minimum withdraw limit set to $' + minLimit);
+            }
+        }
+    </script>
+</body>
+            </html>
+            
