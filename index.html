@@ -9,7 +9,7 @@
     <style>
         * { font-family: 'Inter', sans-serif; }
         body { background: radial-gradient(circle at 0% 0%, #0a0a0a, #0f0f12, #1a0b0e); min-height: 100vh; margin: 0; overflow-x: hidden; }
-        .glass-panel { background: rgba(20,20,25,0.55); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 25px 40px -15px rgba(0,0,0,0.7); }
+        .glass-panel { background: rgba(20,20,25,0.55); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 25px 40px -15px rgba(0,0,0,0.7); }
         .glass-card { background: rgba(30,20,25,0.5); backdrop-filter: blur(16px); border: 1px solid rgba(255,70,70,0.25); box-shadow: 0 20px 35px -12px rgba(200,30,30,0.3); transition: transform 0.25s ease, box-shadow 0.3s ease; }
         .glass-card:hover { box-shadow: 0 25px 45px -12px rgba(220,38,38,0.45); transform: translateY(-3px); }
         .glass-modal { background: rgba(12,12,16,0.92); backdrop-filter: blur(30px); border: 1px solid rgba(239,68,68,0.5); box-shadow: 0 30px 60px rgba(180,20,20,0.5); }
@@ -30,6 +30,9 @@
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(239,68,68,0.3); border-radius: 3px; }
+        .gateway-card { cursor: pointer; transition: all 0.2s ease; border: 1px solid rgba(255,255,255,0.08); }
+        .gateway-card:hover { border-color: rgba(239,68,68,0.4); background: rgba(239,68,68,0.05); }
+        .gateway-card.selected { border-color: #ef4444; background: rgba(239,68,68,0.15); box-shadow: 0 0 0 2px rgba(239,68,68,0.3); }
     </style>
 </head>
 <body>
@@ -38,21 +41,16 @@
     <div id="authScreen" class="fixed inset-0 z-[100] flex items-center justify-center p-4 login-bg overflow-y-auto">
         <div class="float-orb w-[400px] h-[400px] bg-red-900/40 top-[-100px] left-[-100px]"></div>
         <div class="float-orb w-[500px] h-[500px] bg-red-800/20 bottom-[-200px] right-[-150px]"></div>
-
         <div class="glass-modal w-full max-w-md p-8 rounded-3xl relative z-10 border border-red-500/30 my-8">
             <div class="text-center mb-6">
                 <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-tr from-red-600 to-red-400 flex items-center justify-center font-bold text-2xl shadow-lg shadow-red-600/40 mb-4">TG</div>
                 <h2 class="text-2xl font-bold text-white tracking-tight">Trust Gateway</h2>
                 <p class="text-sm text-red-400/80 mt-1">Premium Secure Wallet</p>
             </div>
-
-            <!-- Auth Tabs -->
             <div class="flex bg-black/40 rounded-xl p-1 mb-6 border border-red-500/20">
                 <button id="tab-login-btn" type="button" onclick="switchAuthTab('login')" class="flex-1 py-2.5 rounded-lg text-sm font-semibold text-red-400 bg-red-600/20 transition">Login</button>
                 <button id="tab-signup-btn" type="button" onclick="switchAuthTab('signup')" class="flex-1 py-2.5 rounded-lg text-sm font-semibold text-gray-400 transition">Sign Up</button>
             </div>
-
-            <!-- LOGIN FORM -->
             <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
                     <label class="block text-xs font-medium text-gray-300 mb-1.5">Email</label>
@@ -66,8 +64,6 @@
                 <button type="submit" class="w-full btn-primary py-3.5 rounded-xl font-semibold text-sm tracking-wide text-white">Sign In Securely</button>
                 <p class="text-[10px] text-center text-gray-500 pt-1">Admin: admin@gmail.com / admin2008</p>
             </form>
-
-            <!-- SIGNUP FORM -->
             <form id="signupForm" onsubmit="handleSignup(event)" class="space-y-4 hidden">
                 <div>
                     <label class="block text-xs font-medium text-gray-300 mb-1.5">Full Name</label>
@@ -108,7 +104,7 @@
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
                 </div>
-                <div class="glass-card p-4 rounded-xl mb-6 flex items-center space-x-3">
+                <div class="glass-card p-4 rounded-xl mb-6 flex items-center space-x-3 cursor-pointer" onclick="switchTab('profile')">
                     <div id="sidebar-avatar" class="w-11 h-11 rounded-full bg-red-500/20 flex items-center justify-center font-bold text-red-400 border border-red-500/40 text-lg">JD</div>
                     <div class="min-w-0">
                         <h4 id="sidebar-name" class="font-semibold text-sm text-white truncate">John Doe</h4>
@@ -120,9 +116,21 @@
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
                         <span class="font-medium text-sm">Dashboard</span>
                     </button>
+                    <button onclick="openDepositModal()" class="w-full flex items-center space-x-3 p-3.5 rounded-xl text-gray-300 transition text-left">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                        <span class="font-medium text-sm">Deposit</span>
+                    </button>
                     <button onclick="openWithdrawModal()" class="w-full flex items-center space-x-3 p-3.5 rounded-xl text-gray-300 transition text-left">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                         <span class="font-medium text-sm">Withdraw</span>
+                    </button>
+                    <button onclick="switchTab('history')" id="nav-history" class="w-full flex items-center space-x-3 p-3.5 rounded-xl text-gray-300 transition text-left">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                        <span class="font-medium text-sm">History</span>
+                    </button>
+                    <button onclick="switchTab('profile')" id="nav-profile" class="w-full flex items-center space-x-3 p-3.5 rounded-xl text-gray-300 transition text-left">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        <span class="font-medium text-sm">Profile</span>
                     </button>
                     <button onclick="switchTab('admin')" id="nav-admin" class="w-full flex items-center space-x-3 p-3.5 rounded-xl text-gray-300 transition text-left hidden">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
@@ -149,40 +157,148 @@
                     </button>
                     <h1 id="page-title" class="text-lg md:text-xl font-bold text-red-400 glow-red">Wallet Dashboard</h1>
                 </div>
-                <button onclick="openWithdrawModal()" class="btn-primary px-4 py-2 md:px-5 md:py-2.5 rounded-xl text-xs md:text-sm font-semibold text-white shadow-lg shadow-red-600/40 transition">Withdraw Now</button>
+                <div class="flex items-center gap-2">
+                    <button onclick="openDepositModal()" class="btn-outline px-4 py-2 md:px-5 md:py-2.5 rounded-xl text-xs md:text-sm font-semibold text-gray-200 transition">Deposit</button>
+                    <button onclick="openWithdrawModal()" class="btn-primary px-4 py-2 md:px-5 md:py-2.5 rounded-xl text-xs md:text-sm font-semibold text-white shadow-lg shadow-red-600/40 transition">Withdraw</button>
+                </div>
             </header>
 
             <!-- DASHBOARD -->
             <div id="tab-dashboard" class="p-4 md:p-8 space-y-6 relative z-10">
                 <div class="glass-card p-6 md:p-8 rounded-3xl shadow-2xl relative overflow-hidden">
                     <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-red-600/10 rounded-full blur-3xl"></div>
-                    <p class="text-xs text-gray-400 uppercase tracking-widest font-medium">Total Available Balance</p>
-                    <h2 id="display-balance" class="text-5xl md:text-6xl font-extrabold mt-2 balance-glow">₹0.00</h2>
-                    <p class="text-xs text-red-400/70 mt-1">INR • Updated just now</p>
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs text-gray-400 uppercase tracking-widest font-medium">Total Available Balance</p>
+                            <h2 id="display-balance" class="text-5xl md:text-6xl font-extrabold mt-2 balance-glow">₹0.00</h2>
+                            <p class="text-xs text-red-400/70 mt-1">INR • Updated just now</p>
+                        </div>
+                        <div class="hidden md:flex w-16 h-16 rounded-2xl bg-red-600/20 items-center justify-center border border-red-500/30">
+                            <svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                    </div>
                     <div class="flex flex-wrap gap-3 mt-6">
-                        <button onclick="openWithdrawModal()" class="btn-primary px-6 py-3 rounded-xl font-medium text-sm text-white">Withdraw Funds</button>
-                        <button onclick="depositDemo()" class="btn-outline px-6 py-3 rounded-xl font-medium text-sm text-gray-200">Quick Deposit</button>
+                        <button onclick="openDepositModal()" class="btn-outline px-6 py-3 rounded-xl font-medium text-sm text-gray-200 flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg> Add Money
+                        </button>
+                        <button onclick="openWithdrawModal()" class="btn-primary px-6 py-3 rounded-xl font-medium text-sm text-white flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg> Withdraw
+                        </button>
                     </div>
                 </div>
+
+                <!-- Quick Actions -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <button onclick="openDepositModal()" class="glass-card p-4 rounded-2xl text-left">
+                        <div class="w-10 h-10 rounded-xl bg-green-500/20 text-green-400 flex items-center justify-center mb-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                        </div>
+                        <p class="text-xs font-semibold text-white">Deposit</p>
+                        <p class="text-[10px] text-gray-400">Add money</p>
+                    </button>
+                    <button onclick="openWithdrawModal()" class="glass-card p-4 rounded-2xl text-left">
+                        <div class="w-10 h-10 rounded-xl bg-red-500/20 text-red-400 flex items-center justify-center mb-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg>
+                        </div>
+                        <p class="text-xs font-semibold text-white">Withdraw</p>
+                        <p class="text-[10px] text-gray-400">Cash out</p>
+                    </button>
+                    <button onclick="switchTab('history')" class="glass-card p-4 rounded-2xl text-left">
+                        <div class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center mb-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                        </div>
+                        <p class="text-xs font-semibold text-white">History</p>
+                        <p class="text-[10px] text-gray-400">All activity</p>
+                    </button>
+                    <button onclick="switchTab('profile')" class="glass-card p-4 rounded-2xl text-left">
+                        <div class="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center mb-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        </div>
+                        <p class="text-xs font-semibold text-white">Profile</p>
+                        <p class="text-[10px] text-gray-400">Your account</p>
+                    </button>
+                </div>
+
                 <div class="glass-panel p-6 rounded-3xl">
-                    <h3 class="text-md font-bold mb-4 text-red-400 flex items-center gap-2"><span class="w-1.5 h-5 bg-red-500 rounded-full"></span> Recent Transactions</h3>
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-md font-bold text-red-400 flex items-center gap-2"><span class="w-1.5 h-5 bg-red-500 rounded-full"></span> Recent Transactions</h3>
+                        <button onclick="switchTab('history')" class="text-[10px] text-red-400 hover:text-red-300 font-medium">View All →</button>
+                    </div>
                     <div id="transactions-list" class="space-y-3"></div>
                 </div>
             </div>
 
-            <!-- ADMIN -->
+            <!-- HISTORY TAB -->
+            <div id="tab-history" class="p-4 md:p-8 space-y-6 hidden relative z-10">
+                <div class="glass-panel p-6 md:p-8 rounded-3xl">
+                    <h3 class="text-lg font-bold mb-4 text-red-400 flex items-center gap-2"><span class="w-1.5 h-5 bg-red-500 rounded-full"></span> Transaction History</h3>
+                    <div class="flex gap-2 mb-4 flex-wrap">
+                        <button onclick="filterHistory('all')" id="filter-all" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-600/20 text-red-400 border border-red-500/40 transition">All</button>
+                        <button onclick="filterHistory('deposit')" id="filter-deposit" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-400 border border-white/10 transition">Deposits</button>
+                        <button onclick="filterHistory('withdraw')" id="filter-withdraw" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-400 border border-white/10 transition">Withdrawals</button>
+                    </div>
+                    <div id="history-list" class="space-y-3"></div>
+                </div>
+            </div>
+
+            <!-- PROFILE TAB -->
+            <div id="tab-profile" class="p-4 md:p-8 space-y-6 hidden relative z-10">
+                <div class="glass-panel p-6 md:p-8 rounded-3xl">
+                    <h3 class="text-lg font-bold mb-4 text-red-400 flex items-center gap-2"><span class="w-1.5 h-5 bg-red-500 rounded-full"></span> My Profile</h3>
+                    <div class="flex items-center gap-4 mb-6">
+                        <div id="profile-avatar" class="w-20 h-20 rounded-full bg-red-500/20 flex items-center justify-center font-bold text-red-400 border-2 border-red-500/40 text-2xl">JD</div>
+                        <div>
+                            <h4 id="profile-name" class="text-xl font-bold text-white">John Doe</h4>
+                            <p id="profile-email" class="text-xs text-gray-400">john@example.com</p>
+                            <span id="profile-role" class="text-[10px] px-2 py-0.5 rounded-full bg-green-500/20 text-green-400 border border-green-500/30 mt-1 inline-block">VERIFIED USER</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="glass-card p-4 rounded-xl">
+                            <p class="text-[10px] text-gray-400 uppercase">Phone</p>
+                            <p id="profile-phone" class="text-sm font-semibold text-white mt-1">+91 98765 43210</p>
+                        </div>
+                        <div class="glass-card p-4 rounded-xl">
+                            <p class="text-[10px] text-gray-400 uppercase">Member Since</p>
+                            <p id="profile-joined" class="text-sm font-semibold text-white mt-1">2026-01-01</p>
+                        </div>
+                        <div class="glass-card p-4 rounded-xl">
+                            <p class="text-[10px] text-gray-400 uppercase">Total Balance</p>
+                            <p id="profile-balance" class="text-sm font-bold text-green-400 mt-1">₹0.00</p>
+                        </div>
+                        <div class="glass-card
+                                                    </div>
+                    </div>
+
+                    <!-- Change Password -->
+                    <div class="glass-card p-5 rounded-2xl mt-4">
+                        <h4 class="text-sm font-semibold text-white mb-3 flex items-center gap-2">
+                            <span class="w-1.5 h-4 bg-red-500 rounded-full"></span> Change Password
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <input type="password" id="old-password" placeholder="Current password" class="input-glass rounded-xl p-3 text-sm text-white placeholder-gray-500">
+                            <input type="password" id="new-password" placeholder="New password (min 6)" class="input-glass rounded-xl p-3 text-sm text-white placeholder-gray-500">
+                        </div>
+                        <button onclick="changePassword()" class="mt-3 btn-outline px-5 py-2.5 rounded-xl text-xs font-semibold text-gray-200">Update Password</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ADMIN TAB -->
             <div id="tab-admin" class="p-4 md:p-8 space-y-6 hidden relative z-10">
                 <div class="glass-panel p-6 md:p-8 rounded-3xl border border-red-500/30">
                     <h3 class="text-lg font-bold mb-6 text-red-500 flex items-center gap-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
                         <span>Admin Control Center</span>
                     </h3>
+
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                         <div class="glass-card p-4 rounded-xl"><p class="text-[10px] text-gray-400 uppercase">Total Users</p><p id="stat-total-users" class="text-2xl font-bold text-white mt-1">0</p></div>
                         <div class="glass-card p-4 rounded-xl"><p class="text-[10px] text-gray-400 uppercase">Total Deposits</p><p id="stat-total-deposits" class="text-2xl font-bold text-green-400 mt-1">₹0</p></div>
                         <div class="glass-card p-4 rounded-xl"><p class="text-[10px] text-gray-400 uppercase">Total Withdrawn</p><p id="stat-total-withdrawn" class="text-2xl font-bold text-red-400 mt-1">₹0</p></div>
                         <div class="glass-card p-4 rounded-xl"><p class="text-[10px] text-gray-400 uppercase">Min Withdraw</p><p id="stat-min-withdraw" class="text-2xl font-bold text-white mt-1">₹500</p></div>
                     </div>
+
                     <div class="glass-card rounded-2xl overflow-hidden">
                         <div class="p-4 border-b border-red-500/20 flex justify-between items-center flex-wrap gap-2">
                             <h4 class="font-semibold text-sm text-white flex items-center gap-2"><span class="w-1.5 h-4 bg-red-500 rounded-full"></span> Registered Users</h4>
@@ -204,6 +320,7 @@
                             </table>
                         </div>
                     </div>
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                         <div class="glass-card p-5 rounded-2xl space-y-4">
                             <h4 class="font-semibold text-sm text-white flex items-center gap-2"><span class="w-1.5 h-4 bg-red-500 rounded-full"></span> Withdrawal Settings</h4>
@@ -220,31 +337,84 @@
                     </div>
                 </div>
             </div>
+
         </main>
     </div>
 
-    <!-- Withdraw Modal -->
+    <!-- ========== DEPOSIT MODAL (with dynamic gateway fields) ========== -->
+    <div id="depositModal" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4 z-[90]">
+        <div class="glass-modal w-full max-w-md p-6 md:p-8 rounded-3xl relative border border-red-500/40 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-bold text-green-400">Add Money</h3>
+                <button onclick="closeDepositModal()" class="text-gray-400 hover:text-white text-2xl leading-none">&times;</button>
+            </div>
+            <form onsubmit="handleDeposit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1.5">Amount (₹)</label>
+                    <input type="number" id="deposit-input" required placeholder="0.00" min="1" class="w-full input-glass rounded-xl p-3.5 text-sm text-white placeholder-gray-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-2">Payment Method</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <div onclick="selectDepositGateway('upi')" id="gw-upi" class="gateway-card rounded-xl p-3 text-center">
+                            <div class="text-lg mb-1">📱</div><p class="text-[10px] font-semibold text-white">UPI</p>
+                        </div>
+                        <div onclick="selectDepositGateway('bank')" id="gw-bank" class="gateway-card rounded-xl p-3 text-center">
+                            <div class="text-lg mb-1">🏦</div><p class="text-[10px] font-semibold text-white">Bank</p>
+                        </div>
+                        <div onclick="selectDepositGateway('usdt')" id="gw-usdt" class="gateway-card rounded-xl p-3 text-center">
+                            <div class="text-lg mb-1">₮</div><p class="text-[10px] font-semibold text-white">USDT</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dynamic fields -->
+                <div id="deposit-dynamic-fields" class="space-y-3"></div>
+
+                <div class="bg-green-500/10 border border-green-500/20 rounded-xl p-3 text-[10px] text-green-300/80">
+                    ✅ Instant credit after verification. Funds reflect immediately in demo.
+                </div>
+                <button type="submit" class="w-full btn-primary py-3.5 rounded-xl font-semibold text-sm text-white">Confirm Deposit</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========== WITHDRAW MODAL (with dynamic gateway fields) ========== -->
     <div id="withdrawModal" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4 z-[90]">
-        <div class="glass-modal w-full max-w-md p-6 md:p-8 rounded-3xl relative border border-red-500/40">
+        <div class="glass-modal w-full max-w-md p-6 md:p-8 rounded-3xl relative border border-red-500/40 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-lg font-bold text-red-400">Withdraw Funds</h3>
                 <button onclick="closeWithdrawModal()" class="text-gray-400 hover:text-white text-2xl leading-none">&times;</button>
             </div>
-            <form onsubmit="handleWithdraw(event)" class="space-y-5">
+            <form onsubmit="handleWithdraw(event)" class="space-y-4">
                 <div>
                     <label class="block text-xs font-medium text-gray-300 mb-1.5">Amount (₹)</label>
                     <input type="number" id="withdraw-input" required placeholder="0.00" min="1" class="w-full input-glass rounded-xl p-3.5 text-sm text-white placeholder-gray-500">
                 </div>
+
                 <div>
-                    <label class="block text-xs font-medium text-gray-300 mb-1.5">Select Gateway</label>
-                    <select class="w-full input-glass rounded-xl p-3.5 text-sm text-white">
-                        <option class="bg-neutral-900">Bank Account (XXXX1234)</option>
-                        <option class="bg-neutral-900">UPI / GPay</option>
-                        <option class="bg-neutral-900">USDT Wallet (TRC20)</option>
-                    </select>
+                    <label class="block text-xs font-medium text-gray-300 mb-2">Withdraw To</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <div onclick="selectWithdrawGateway('upi')" id="ww-gw-upi" class="gateway-card rounded-xl p-3 text-center">
+                            <div class="text-lg mb-1">📱</div><p class="text-[10px] font-semibold text-white">UPI</p>
+                        </div>
+                        <div onclick="selectWithdrawGateway('bank')" id="ww-gw-bank" class="gateway-card rounded-xl p-3 text-center">
+                            <div class="text-lg mb-1">🏦</div><p class="text-[10px] font-semibold text-white">Bank</p>
+                        </div>
+                        <div onclick="selectWithdrawGateway('usdt')" id="ww-gw-usdt" class="gateway-card rounded-xl p-3 text-center">
+                            <div class="text-lg mb-1">₮</div><p class="text-[10px] font-semibold text-white">USDT</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="bg-red-500/10 border border-red-500/20 rounded-xl p-3 text-[10px] text-red-300/80">⚡ Requests processed within 24 hours. Minimum: <span id="modal-min-limit">₹500.00</span></div>
-                <button type="submit" class="w-full btn-primary py-3.5 rounded-xl font-semibold text-sm text-white">Submit Withdrawal Request</button>
+
+                <!-- Dynamic fields -->
+                <div id="withdraw-dynamic-fields" class="space-y-3"></div>
+
+                <div class="bg-red-500/10 border border-red-500/20 rounded-xl p-3 text-[10px] text-red-300/80">
+                    ⚡ Requests processed within 24 hours. Minimum: <span id="modal-min-limit">₹500.00</span>
+                </div>
+                <button type="submit" class="w-full btn-primary py-3.5 rounded-xl font-semibold text-sm text-white">Submit Withdrawal</button>
             </form>
         </div>
     </div>
@@ -255,590 +425,751 @@
         <span id="toast-message">Success</span>
     </div>
 
-    <script>
-        // ============================================================
-        // TRUST GATEWAY — CLEAN FULL SCRIPT (no duplicates)
-        // ============================================================
+    <!-- SCRIPT_PLACEHOLDER (ഭാഗം 2 ഇവിടെ വരും) -->
 
-        // ---------- STATE ----------
-        let currentUser = null;
-        let minLimit = 500;
-        let allUsers = [];
+</body>
+</html>
+<script>
+    // ============================================================
+    // TRUST GATEWAY — FULL JAVASCRIPT
+    // ============================================================
 
-        // ---------- STORAGE ----------
-        function loadUsers() {
-            const raw = localStorage.getItem('tg_users_v2');
-            if (!raw) {
-                const seed = [
-                    {
-                        id: 'admin-001',
-                        name: 'Admin',
-                        email: 'admin@gmail.com',
-                        phone: '+91 90000 00001',
-                        password: 'admin2008',
-                        balance: 0,
-                        role: 'admin',
-                        joined: '2026-01-01',
-                        transactions: []
-                    }
-                ];
-                localStorage.setItem('tg_users_v2', JSON.stringify(seed));
-                return seed;
-            }
-            return JSON.parse(raw);
+    // ---------- STATE ----------
+    let currentUser = null;
+    let minLimit = 500;
+    let allUsers = [];
+    let depositGateway = null;
+    let withdrawGateway = null;
+    let historyFilter = 'all';
+
+    // ---------- STORAGE ----------
+    function loadUsers() {
+        const raw = localStorage.getItem('tg_users_v3');
+        if (!raw) {
+            const seed = [{
+                id: 'admin-001',
+                name: 'Admin',
+                email: 'admin@gmail.com',
+                phone: '+91 90000 00001',
+                password: 'admin2008',
+                balance: 0,
+                role: 'admin',
+                joined: '2026-01-01',
+                transactions: [],
+                payout: { upi: '', bank: { acc: '', ifsc: '' }, usdt: '' }
+            }];
+            localStorage.setItem('tg_users_v3', JSON.stringify(seed));
+            return seed;
         }
-        function saveUsers(list) { localStorage.setItem('tg_users_v2', JSON.stringify(list)); }
+        return JSON.parse(raw);
+    }
+    function saveUsers(list) { localStorage.setItem('tg_users_v3', JSON.stringify(list)); }
 
-        // ---------- FORMAT ----------
-        const formatINR = (num) => new Intl.NumberFormat('en-IN', { style:'currency', currency:'INR', minimumFractionDigits:2, maximumFractionDigits:2 }).format(num);
+    // ---------- FORMATTERS ----------
+    const formatINR = (num) => new Intl.NumberFormat('en-IN', {
+        style: 'currency', currency: 'INR',
+        minimumFractionDigits: 2, maximumFractionDigits: 2
+    }).format(num);
 
-        function showToast(msg, icon = '✅') {
-            const t = document.getElementById('toast');
-            document.getElementById('toast-message').innerText = msg;
-            document.getElementById('toast-icon').innerText = icon;
-            t.classList.remove('hidden'); t.classList.add('flex');
-            clearTimeout(window._tt);
-            window._tt = setTimeout(() => { t.classList.add('hidden'); t.classList.remove('flex'); }, 3500);
+    function showToast(msg, icon = '✅') {
+        const t = document.getElementById('toast');
+        document.getElementById('toast-message').innerText = msg;
+        document.getElementById('toast-icon').innerText = icon;
+        t.classList.remove('hidden'); t.classList.add('flex');
+        clearTimeout(window._tt);
+        window._tt = setTimeout(() => { t.classList.add('hidden'); t.classList.remove('flex'); }, 3500);
+    }
+
+    function getInitials(name) {
+        return (name || '??').trim().split(/\s+/).map(w => w[0]).join('').toUpperCase().slice(0, 2) || '??';
+    }
+
+    // ============================================================
+    // AUTH
+    // ============================================================
+    function switchAuthTab(tab) {
+        const loginForm = document.getElementById('loginForm');
+        const signupForm = document.getElementById('signupForm');
+        const loginBtn = document.getElementById('tab-login-btn');
+        const signupBtn = document.getElementById('tab-signup-btn');
+        document.getElementById('loginError').classList.add('hidden');
+        document.getElementById('signupError').classList.add('hidden');
+
+        if (tab === 'login') {
+            loginForm.classList.remove('hidden');
+            signupForm.classList.add('hidden');
+            loginBtn.className = 'flex-1 py-2.5 rounded-lg text-sm font-semibold text-red-400 bg-red-600/20 transition';
+            signupBtn.className = 'flex-1 py-2.5 rounded-lg text-sm font-semibold text-gray-400 transition';
+        } else {
+            loginForm.classList.add('hidden');
+            signupForm.classList.remove('hidden');
+            signupBtn.className = 'flex-1 py-2.5 rounded-lg text-sm font-semibold text-red-400 bg-red-600/20 transition';
+            loginBtn.className = 'flex-1 py-2.5 rounded-lg text-sm font-semibold text-gray-400 transition';
+        }
+    }
+
+    function handleLogin(e) {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+        const password = document.getElementById('loginPassword').value;
+        const errEl = document.getElementById('loginError');
+        errEl.classList.add('hidden');
+
+        allUsers = loadUsers();
+        if (!allUsers.some(u => u.email.toLowerCase() === email)) {
+            errEl.innerText = '❌ This email is not registered. Please Sign Up first.';
+            errEl.classList.remove('hidden');
+            return;
+        }
+        const user = allUsers.find(u => u.email.toLowerCase() === email && u.password === password);
+        if (!user) {
+            errEl.innerText = '❌ Incorrect password. Please try again.';
+            errEl.classList.remove('hidden');
+            return;
+        }
+        currentUser = user;
+        startApp(user);
+    }
+
+    function handleSignup(e) {
+        e.preventDefault();
+        const name = document.getElementById('signupName').value.trim();
+        const email = document.getElementById('signupEmail').value.trim().toLowerCase();
+        const phone = document.getElementById('signupPhone').value.trim();
+        const password = document.getElementById('signupPassword').value;
+        const deposit = parseFloat(document.getElementById('signupDeposit').value) || 0;
+        const errEl = document.getElementById('signupError');
+        errEl.classList.add('hidden');
+
+        if (!name || !email || !phone || !password) {
+            errEl.innerText = '⚠️ Please fill all fields.';
+            errEl.classList.remove('hidden'); return;
+        }
+        if (password.length < 6) {
+            errEl.innerText = '⚠️ Password must be at least 6 characters.';
+            errEl.classList.remove('hidden'); return;
+        }
+        if (deposit < 0) {
+            errEl.innerText = '⚠️ Deposit cannot be negative.';
+            errEl.classList.remove('hidden'); return;
         }
 
-        function getInitials(name) {
-            return name.trim().split(/\s+/).map(w => w[0]).join('').toUpperCase().slice(0,2) || '??';
+        allUsers = loadUsers();
+        if (allUsers.some(u => u.email.toLowerCase() === email)) {
+            errEl.innerText = '❌ This email is already registered. Please Login.';
+            errEl.classList.remove('hidden'); return;
         }
 
-        // ============================================================
-        // AUTH TAB SWITCH (FIXED)
-        // ============================================================
-        function switchAuthTab(tab) {
-            const loginForm = document.getElementById('loginForm');
-            const signupForm = document.getElementById('signupForm');
-            const loginBtn = document.getElementById('tab-login-btn');
-            const signupBtn = document.getElementById('tab-signup-btn');
-            const loginErr = document.getElementById('loginError');
-            const signupErr = document.getElementById('signupError');
+        const newUser = {
+            id: 'user-' + Date.now(),
+            name, email, phone, password,
+            balance: deposit,
+            role: 'user',
+            joined: new Date().toISOString().split('T')[0],
+            transactions: deposit > 0
+                ? [{ title: 'Initial Deposit', amount: deposit, time: 'Just now', type: 'deposit' }]
+                : [],
+            payout: { upi: '', bank: { acc: '', ifsc: '' }, usdt: '' }
+        };
+        allUsers.push(newUser);
+        saveUsers(allUsers);
+        showToast(`Welcome ${name.split(' ')[0]}! Account created.`, '🎉');
+        currentUser = newUser;
+        startApp(newUser);
+    }
 
-            loginErr.classList.add('hidden');
-            signupErr.classList.add('hidden');
+    function handleLogout() {
+        if (!confirm('Are you sure you want to logout?')) return;
+        currentUser = null;
+        sessionStorage.removeItem('tg_session_v3');
+        document.getElementById('appContainer').classList.add('hidden');
+        document.getElementById('authScreen').classList.remove('hidden');
+        document.getElementById('loginPassword').value = '';
+        document.getElementById('loginEmail').value = '';
+        switchAuthTab('login');
+        showToast('Logged out successfully.', '👋');
+    }
 
-            if (tab === 'login') {
-                loginForm.classList.remove('hidden');
-                signupForm.classList.add('hidden');
-                loginBtn.className = 'flex-1 py-2.5 rounded-lg text-sm font-semibold text-red-400 bg-red-600/20 transition';
-                signupBtn.className = 'flex-1 py-2.5 rounded-lg text-sm font-semibold text-gray-400 transition';
+    // ============================================================
+    // START APP
+    // ============================================================
+    function startApp(user) {
+        sessionStorage.setItem('tg_session_v3', JSON.stringify({ id: user.id, email: user.email }));
+        document.getElementById('authScreen').classList.add('hidden');
+        document.getElementById('appContainer').classList.remove('hidden');
+
+        document.getElementById('sidebar-avatar').innerText = getInitials(user.name);
+        document.getElementById('sidebar-name').innerText = user.name;
+        const roleEl = document.getElementById('sidebar-role');
+        if (user.role === 'admin') {
+            roleEl.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse"></span> Administrator';
+            roleEl.className = 'text-xs text-yellow-400 flex items-center gap-1';
+            document.getElementById('nav-admin').classList.remove('hidden');
+        } else {
+            roleEl.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span> Verified User';
+            roleEl.className = 'text-xs text-red-400 flex items-center gap-1';
+            document.getElementById('nav-admin').classList.add('hidden');
+        }
+
+        updateBalanceDisplay();
+        renderTransactions();
+        renderProfile();
+        if (user.role === 'admin') { refreshUsersTable(); updateAdminStats(); }
+        switchTab('dashboard');
+        showToast(`Welcome back, ${user.name.split(' ')[0]}! 👋`, '👋');
+    }
+
+    // ============================================================
+    // SIDEBAR / TABS
+    // ============================================================
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('-translate-x-full');
+    }
+
+    function switchTab(tab) {
+        const tabs = ['dashboard', 'history', 'profile', 'admin'];
+        tabs.forEach(t => {
+            const el = document.getElementById('tab-' + t);
+            const nav = document.getElementById('nav-' + t);
+            if (!el) return;
+            if (t === tab) {
+                el.classList.remove('hidden');
+                if (nav) nav.classList.add('tab-btn-active');
             } else {
-                loginForm.classList.add('hidden');
-                signupForm.classList.remove('hidden');
-                signupBtn.className = 'flex-1 py-2.5 rounded-lg text-sm font-semibold text-red-400 bg-red-600/20 transition';
-                loginBtn.className = 'flex-1 py-2.5 rounded-lg text-sm font-semibold text-gray-400 transition';
+                el.classList.add('hidden');
+                if (nav) nav.classList.remove('tab-btn-active');
             }
+        });
+
+        const titles = {
+            dashboard: 'Wallet Dashboard',
+            history: 'Transaction History',
+            profile: 'My Profile',
+            admin: 'Admin Control Panel'
+        };
+        document.getElementById('page-title').innerText = titles[tab] || 'Dashboard';
+
+        if (tab === 'admin' && (!currentUser || currentUser.role !== 'admin')) {
+            showToast('Access denied. Admins only.', '🔒');
+            switchTab('dashboard'); return;
         }
+        if (tab === 'history') renderHistory();
+        if (tab === 'profile') renderProfile();
+        if (tab === 'admin') { refreshUsersTable(); updateAdminStats(); }
 
-        // ============================================================
-        // LOGIN (strict — must be registered)
-        // ============================================================
-        function handleLogin(e) {
-            e.preventDefault();
-            const email = document.getElementById('loginEmail').value.trim().toLowerCase();
-            const password = document.getElementById('loginPassword').value;
-            const errEl = document.getElementById('loginError');
-            errEl.classList.add('hidden');
-
-            allUsers = loadUsers();
-            const emailExists = allUsers.some(u => u.email.toLowerCase() === email);
-
-            if (!emailExists) {
-                errEl.innerText = '❌ This email is not registered. Please Sign Up first.';
-                errEl.classList.remove('hidden');
-                return;
-            }
-
-            const user = allUsers.find(u => u.email.toLowerCase() === email && u.password === password);
-            if (!user) {
-                errEl.innerText = '❌ Incorrect password. Please try again.';
-                errEl.classList.remove('hidden');
-                return;
-            }
-
-            currentUser = user;
-            startApp(user);
+        if (window.innerWidth < 768 && !document.getElementById('sidebar').classList.contains('-translate-x-full')) {
+            toggleSidebar();
         }
+    }
 
-                // ============================================================
-        // SIGNUP (with duplicate check + validation)
-        // ============================================================
-        function handleSignup(e) {
-            e.preventDefault();
-            const name = document.getElementById('signupName').value.trim();
-            const email = document.getElementById('signupEmail').value.trim().toLowerCase();
-            const phone = document.getElementById('signupPhone').value.trim();
-            const password = document.getElementById('signupPassword').value;
-            const deposit = parseFloat(document.getElementById('signupDeposit').value) || 0;
-            const errEl = document.getElementById('signupError');
-            errEl.classList.add('hidden');
+    // ============================================================
+    // BALANCE + TRANSACTIONS
+    // ============================================================
+    function updateBalanceDisplay() {
+        if (!currentUser) return;
+        document.getElementById('display-balance').innerText = formatINR(currentUser.balance);
+    }
 
-            // Validation
-            if (!name || !email || !phone || !password) {
-                errEl.innerText = '⚠️ Please fill all fields.';
-                errEl.classList.remove('hidden');
-                return;
-            }
-            if (password.length < 6) {
-                errEl.innerText = '⚠️ Password must be at least 6 characters.';
-                errEl.classList.remove('hidden');
-                return;
-            }
-            if (deposit < 0) {
-                errEl.innerText = '⚠️ Deposit cannot be negative.';
-                errEl.classList.remove('hidden');
-                return;
-            }
-
-            allUsers = loadUsers();
-            if (allUsers.some(u => u.email.toLowerCase() === email)) {
-                errEl.innerText = '❌ This email is already registered. Please Login.';
-                errEl.classList.remove('hidden');
-                return;
-            }
-
-            const newUser = {
-                id: 'user-' + Date.now(),
-                name, email, phone, password,
-                balance: deposit,
-                role: 'user',
-                joined: new Date().toISOString().split('T')[0],
-                transactions: deposit > 0
-                    ? [{ title: 'Initial Deposit', amount: deposit, time: 'Just now' }]
-                    : []
-            };
-
-            allUsers.push(newUser);
-            saveUsers(allUsers);
-
-            showToast(`Welcome ${name.split(' ')[0]}! Account created.`, '🎉');
-            currentUser = newUser;
-            startApp(newUser);
+    function renderTransactions() {
+        const container = document.getElementById('transactions-list');
+        container.innerHTML = '';
+        const list = currentUser.transactions || [];
+        if (list.length === 0) {
+            container.innerHTML = '<p class="text-xs text-gray-500 text-center py-6">No transactions yet.</p>';
+            return;
         }
+        list.slice().reverse().slice(0, 5).forEach(tx => {
+            container.appendChild(buildTxRow(tx));
+        });
+    }
 
-        // ============================================================
-        // START APP (after login/signup)
-        // ============================================================
-        function startApp(user) {
-            document.getElementById('authScreen').classList.add('hidden');
-            document.getElementById('appContainer').classList.remove('hidden');
+    function buildTxRow(tx) {
+        const isPos = tx.amount > 0;
+        const color = isPos ? 'text-green-400' : 'text-red-400';
+        const bg = isPos ? 'bg-green-500/20 text-green-400 border-green-500/20' : 'bg-red-500/20 text-red-400 border-red-500/20';
+        const arrow = isPos
+            ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>'
+            : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>';
+        const div = document.createElement('div');
+        div.className = 'flex justify-between items-center p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.06] transition';
+        div.innerHTML = `
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-lg ${bg} flex items-center justify-center border">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">${arrow}</svg>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-xs md:text-sm text-white">${tx.title}</h4>
+                    <span class="text-[10px] text-gray-400">${tx.time}</span>
+                </div>
+            </div>
+            <span class="${color} font-bold text-xs md:text-sm">${isPos ? '+' : ''}${formatINR(tx.amount)}</span>
+        `;
+        return div;
+    }
 
-            document.getElementById('sidebar-avatar').innerText = getInitials(user.name);
-            document.getElementById('sidebar-name').innerText = user.name;
-            const roleEl = document.getElementById('sidebar-role');
-            if (user.role === 'admin') {
-                roleEl.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse"></span> Administrator';
-                roleEl.className = 'text-xs text-yellow-400 flex items-center gap-1';
-                document.getElementById('nav-admin').classList.remove('hidden');
-            } else {
-                roleEl.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span> Verified User';
-                roleEl.className = 'text-xs text-red-400 flex items-center gap-1';
-                document.getElementById('nav-admin').classList.add('hidden');
-            }
+    function addTransaction(title, amount, time, type) {
+        currentUser.transactions = currentUser.transactions || [];
+        currentUser.transactions.push({ title, amount, time, type });
+        saveCurrentUser();
+        renderTransactions();
+    }
 
-            updateBalanceDisplay();
-            renderTransactions();
-            if (user.role === 'admin') {
-                refreshUsersTable();
-                updateAdminStats();
-            }
-            switchTab('dashboard');
-            showToast(`Welcome back, ${user.name.split(' ')[0]}! 👋`, '👋');
+    function saveCurrentUser() {
+        const idx = allUsers.findIndex(u => u.id === currentUser.id);
+        if (idx !== -1) { allUsers[idx] = currentUser; saveUsers(allUsers); }
+    }
+
+    // ============================================================
+    // HISTORY TAB
+    // ============================================================
+    function renderHistory() {
+        const container = document.getElementById('history-list');
+        container.innerHTML = '';
+        let list = (currentUser.transactions || []).slice().reverse();
+        if (historyFilter === 'deposit') list = list.filter(t => t.amount > 0);
+        if (historyFilter === 'withdraw') list = list.filter(t => t.amount < 0);
+
+        if (list.length === 0) {
+            container.innerHTML = '<p class="text-xs text-gray-500 text-center py-6">No transactions in this category.</p>';
+            return;
         }
+        list.forEach(tx => container.appendChild(buildTxRow(tx)));
+    }
 
-        // ============================================================
-        // LOGOUT
-        // ============================================================
-        function handleLogout() {
-            if (!confirm('Are you sure you want to logout?')) return;
-            currentUser = null;
-            sessionStorage.removeItem('tg_session_v2');
-            document.getElementById('appContainer').classList.add('hidden');
-            document.getElementById('authScreen').classList.remove('hidden');
-            document.getElementById('loginPassword').value = '';
-            document.getElementById('loginEmail').value = '';
-            switchAuthTab('login');
-            showToast('Logged out successfully.', '👋');
+    function filterHistory(f) {
+        historyFilter = f;
+        ['all', 'deposit', 'withdraw'].forEach(k => {
+            const btn = document.getElementById('filter-' + k);
+            if (k === f) btn.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-600/20 text-red-400 border border-red-500/40 transition';
+            else btn.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-400 border border-white/10 transition';
+        });
+        renderHistory();
+    }
+
+    // ============================================================
+    // PROFILE TAB
+    // ============================================================
+    function renderProfile() {
+        if (!currentUser) return;
+        document.getElementById('profile-avatar').innerText = getInitials(currentUser.name);
+        document.getElementById('profile-name').innerText = currentUser.name;
+        document.getElementById('profile-email').innerText = currentUser.email;
+        document.getElementById('profile-phone').innerText = currentUser.phone;
+        document.getElementById('profile-joined').innerText = currentUser.joined;
+        document.getElementById('profile-balance').innerText = formatINR(currentUser.balance);
+        const role = document.getElementById('profile-role');
+        if (currentUser.role === 'admin') {
+            role.className = 'text-[10px] px-2 py-0.5 rounded-full bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 mt-1 inline-block';
+            role.innerText = 'ADMINISTRATOR';
+        } else {
+            role.className = 'text-[10px] px-2 py-0.5 rounded-full bg-green-500/20 text-green-400 border border-green-500/30 mt-1 inline-block';
+            role.innerText = 'VERIFIED USER';
         }
+    }
 
-        // ============================================================
-        // SIDEBAR + TABS
-        // ============================================================
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('-translate-x-full');
-        }
+    function changePassword() {
+        const oldP = document.getElementById('old-password').value;
+        const newP = document.getElementById('new-password').value;
+        if (oldP !== currentUser.password) { showToast('Current password is incorrect.', '❌'); return; }
+        if (newP.length < 6) { showToast('New password must be at least 6 characters.', '⚠️'); return; }
+        currentUser.password = newP;
+        saveCurrentUser();
+        document.getElementById('old-password').value = '';
+        document.getElementById('new-password').value = '';
+        showToast('Password updated successfully.', '✅');
+    }
 
-        function switchTab(tab) {
-            const dashTab = document.getElementById('tab-dashboard');
-            const adminTab = document.getElementById('tab-admin');
-            const navDash = document.getElementById('nav-dashboard');
-            const navAdmin = document.getElementById('nav-admin');
-            const pageTitle = document.getElementById('page-title');
+    // ============================================================
+    // DEPOSIT MODAL
+    // ============================================================
+    function openDepositModal() {
+        if (!currentUser) return;
+        depositGateway = null;
+        document.getElementById('deposit-input').value = '';
+        document.getElementById('deposit-dynamic-fields').innerHTML = '';
+        ['upi', 'bank', 'usdt'].forEach(g => document.getElementById('gw-' + g).classList.remove('selected'));
+        document.getElementById('depositModal').classList.remove('hidden');
+        document.getElementById('depositModal').classList.add('flex');
+    }
+    function closeDepositModal() {
+        document.getElementById('depositModal').classList.remove('flex');
+        document.getElementById('depositModal').classList.add('hidden');
+    }
 
-            if (tab === 'dashboard') {
-                dashTab.classList.remove('hidden');
-                adminTab.classList.add('hidden');
-                navDash.classList.add('tab-btn-active');
-                navAdmin.classList.remove('tab-btn-active');
-                pageTitle.innerText = 'Wallet Dashboard';
-            } else if (tab === 'admin') {
-                if (!currentUser || currentUser.role !== 'admin') {
-                    showToast('Access denied. Admins only.', '🔒');
-                    return;
-                }
-                dashTab.classList.add('hidden');
-                adminTab.classList.remove('hidden');
-                navAdmin.classList.add('tab-btn-active');
-                navDash.classList.remove('tab-btn-active');
-                pageTitle.innerText = 'Admin Control Panel';
-                refreshUsersTable();
-                updateAdminStats();
-            }
+    function selectDepositGateway(gw) {
+        depositGateway = gw;
+        ['upi', 'bank', 'usdt'].forEach(g => {
+            const el = document.getElementById('gw-' + g);
+            if (g === gw) el.classList.add('selected'); else el.classList.remove('selected');
+        });
 
-            if (window.innerWidth < 768 && !document.getElementById('sidebar').classList.contains('-translate-x-full')) {
-                toggleSidebar();
-            }
-        }
-
-        // ============================================================
-        // BALANCE + TRANSACTIONS
-        // ============================================================
-        function updateBalanceDisplay() {
-            if (!currentUser) return;
-            document.getElementById('display-balance').innerText = formatINR(currentUser.balance);
-        }
-
-        function renderTransactions() {
-            const container = document.getElementById('transactions-list');
-            container.innerHTML = '';
-            const list = currentUser.transactions || [];
-
-            if (list.length === 0) {
-                container.innerHTML = '<p class="text-xs text-gray-500 text-center py-6">No transactions yet.</p>';
-                return;
-            }
-
-            list.slice().reverse().forEach(tx => {
-                const isPos = tx.amount > 0;
-                const color = isPos ? 'text-green-400' : 'text-red-400';
-                const bg = isPos
-                    ? 'bg-green-500/20 text-green-400 border-green-500/20'
-                    : 'bg-red-500/20 text-red-400 border-red-500/20';
-                const arrow = isPos
-                    ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>'
-                    : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>';
-
-                const div = document.createElement('div');
-                div.className = 'flex justify-between items-center p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.06] transition';
-                div.innerHTML = `
-                    <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 rounded-lg ${bg} flex items-center justify-center border">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">${arrow}</svg>
-                        </div>
-                        <div>
-                            <h4 class="font-semibold text-xs md:text-sm text-white">${tx.title}</h4>
-                            <span class="text-[10px] text-gray-400">${tx.time}</span>
-                        </div>
-                    </div>
-                    <span class="${color} font-bold text-xs md:text-sm">${isPos ? '+' : ''}${formatINR(tx.amount)}</span>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        function addTransaction(title, amount, time) {
-            currentUser.transactions = currentUser.transactions || [];
-            currentUser.transactions.push({ title, amount, time });
-            saveCurrentUser();
-            renderTransactions();
-        }
-
-        function saveCurrentUser() {
-            const idx = allUsers.findIndex(u => u.id === currentUser.id);
-            if (idx !== -1) {
-                allUsers[idx] = currentUser;
-                saveUsers(allUsers);
-            }
-        }
-
-        // ============================================================
-        // DEPOSIT (DEMO)
-        // ============================================================
-        function depositDemo() {
-            if (!currentUser) return;
-            const amt = 25000;
-            currentUser.balance += amt;
-            addTransaction('Demo Deposit', amt, 'Just now');
-            updateBalanceDisplay();
-            saveCurrentUser();
-            showToast(`Demo deposit of ${formatINR(amt)} added.`, '✅');
-        }
-
-        // ============================================================
-        // WITHDRAW
-        // ============================================================
-        function openWithdrawModal() {
-            if (!currentUser) return;
-            document.getElementById('withdrawModal').classList.remove('hidden');
-            document.getElementById('withdrawModal').classList.add('flex');
-            document.getElementById('modal-min-limit').innerText = formatINR(minLimit);
-            document.getElementById('withdraw-input').value = '';
-        }
-
-        function closeWithdrawModal() {
-            document.getElementById('withdrawModal').classList.remove('flex');
-            document.getElementById('withdrawModal').classList.add('hidden');
-        }
-
-        function handleWithdraw(e) {
-            e.preventDefault();
-            const amt = parseFloat(document.getElementById('withdraw-input').value);
-
-            if (isNaN(amt) || amt <= 0) { showToast('Please enter a valid amount.', '⚠️'); return; }
-            if (amt < minLimit) { showToast(`Minimum withdrawal is ${formatINR(minLimit)}`, '⚠️'); return; }
-            if (amt > currentUser.balance) { showToast('Insufficient balance.', '❌'); return; }
-
-            currentUser.balance -= amt;
-            addTransaction('Withdrawal Request', -amt, 'Just now');
-            updateBalanceDisplay();
-            saveCurrentUser();
-            closeWithdrawModal();
-            showToast(`Withdrawal of ${formatINR(amt)} submitted.`, '✅');
-        }
-
-        // ============================================================
-        // ADMIN — USERS TABLE
-        // ============================================================
-        function refreshUsersTable() {
-            if (!currentUser || currentUser.role !== 'admin') return;
-            allUsers = loadUsers();
-            const tbody = document.getElementById('users-table-body');
-            tbody.innerHTML = '';
-
-            if (allUsers.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" class="p-6 text-center text-xs text-gray-500">No users registered yet.</td></tr>';
-                return;
-            }
-
-            allUsers.forEach(u => {
-                const roleColor = u.role === 'admin'
-                    ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30'
-                    : 'bg-green-500/20 text-green-400 border-green-500/30';
-                const tr = document.createElement('tr');
-                tr.className = 'border-b border-white/[0.05] user-row transition';
-                tr.innerHTML = `
-                    <td class="p-3">
-                        <div class="flex items-center gap-2">
-                            <div class="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center text-red-400 border border-red-500/30 text-[10px] font-bold">${getInitials(u.name)}</div>
-                            <span class="font-semibold text-white cursor-pointer hover:text-red-400 transition" onclick="showUserDetails('${u.id}')">${u.name}</span>
-                        </div>
-                    </td>
-                    <td class="p-3 text-gray-400">${u.email}</td>
-                    <td class="p-3 text-gray-400">${u.phone}</td>
-                    <td class="p-3 font-bold text-green-400">${formatINR(u.balance)}</td>
-                    <td class="p-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-semibold border ${roleColor}">${u.role.toUpperCase()}</span></td>
-                    <td class="p-3 text-gray-400">${u.joined}</td>
-                    <td class="p-3 text-right whitespace-nowrap">
-                        <button onclick="adminAdjustUser('${u.id}', 1)" class="px-2 py-1 rounded-lg bg-green-500/20 text-green-400 border border-green-500/30 text-[10px] font-semibold hover:bg-green-500/30 mr-1">+ Add</button>
-                        <button onclick="adminAdjustUser('${u.id}', -1)" class="px-2 py-1 rounded-lg bg-red-500/20 text-red-400 border border-red-500/30 text-[10px] font-semibold hover:bg-red-500/30">- Deduct</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function searchUsers(query) {
-            const tbody = document.getElementById('users-table-body');
-            if (!tbody) return;
-            const q = query.toLowerCase().trim();
-            tbody.querySelectorAll('tr').forEach(row => {
-                row.style.display = (!q || row.innerText.toLowerCase().includes(q)) ? '' : 'none';
-            });
-        }
-
-        function adminAdjustUser(userId, sign) {
-            const amtStr = prompt(`Enter amount to ${sign === 1 ? 'ADD to' : 'DEDUCT from'} this user (₹):`);
-            if (!amtStr) return;
-            const amt = parseFloat(amtStr);
-            if (isNaN(amt) || amt <= 0) { showToast('Invalid amount.', '⚠️'); return; }
-
-            allUsers = loadUsers();
-            const user = allUsers.find(u => u.id === userId);
-            if (!user) return;
-            if (sign === -1 && amt > user.balance) { showToast('Cannot deduct more than user balance.', '❌'); return; }
-
-            user.balance += sign * amt;
-            user.transactions = user.transactions || [];
-            user.transactions.push({
-                title: sign === 1 ? 'Admin Credit' : 'Admin Debit',
-                amount: sign * amt,
-                time: 'Just now'
-            });
-            saveUsers(allUsers);
-
-            if (currentUser.id === userId) {
-                currentUser = user;
-                updateBalanceDisplay();
-                renderTransactions();
-            }
-            refreshUsersTable();
-            updateAdminStats();
-            showToast(`${sign === 1 ? 'Added' : 'Deducted'} ${formatINR(amt)} ${sign === 1 ? 'to' : 'from'} ${user.name}.`, '✅');
-        }
-
-        // ============================================================
-        // ADMIN — STATS
-        // ============================================================
-        function updateAdminStats() {
-            if (!currentUser || currentUser.role !== 'admin') return;
-            allUsers = loadUsers();
-            const totalUsers = allUsers.length;
-            let totalDeposits = 0, totalWithdrawn = 0;
-            allUsers.forEach(u => {
-                (u.transactions || []).forEach(t => {
-                    if (t.amount > 0) totalDeposits += t.amount;
-                    else totalWithdrawn += Math.abs(t.amount);
-                });
-            });
-            document.getElementById('stat-total-users').innerText = totalUsers;
-            document.getElementById('stat-total-deposits').innerText = formatINR(totalDeposits);
-            document.getElementById('stat-total-withdrawn').innerText = formatINR(totalWithdrawn);
-            document.getElementById('stat-min-withdraw').innerText = formatINR(minLimit);
-        }
-
-        // ============================================================
-        // ADMIN — SETTINGS / EXPORT / RESET
-        // ============================================================
-        function saveAdminSettings() {
-            const limit = parseFloat(document.getElementById('min-withdraw').value);
-            if (isNaN(limit) || limit < 0) { showToast('Please enter a valid limit.', '⚠️'); return; }
-            minLimit = limit;
-            localStorage.setItem('tg_minLimit_v2', minLimit);
-            document.getElementById('current-limit-display').innerText = formatINR(minLimit);
-            document.getElementById('modal-min-limit').innerText = formatINR(minLimit);
-            updateAdminStats();
-            showToast(`Minimum withdrawal limit set to ${formatINR(minLimit)}.`, '✅');
-        }
-
-        function adminExport() {
-            allUsers = loadUsers();
-            let csv = 'Name,Email,Phone,Balance,Role,Joined\n';
-            allUsers.forEach(u => {
-                csv += `"${u.name}","${u.email}","${u.phone}",${u.balance},${u.role},"${u.joined}"\n`;
-            });
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url; a.download = 'trust_gateway_users.csv';
-            a.click(); URL.revokeObjectURL(url);
-            showToast('Users exported to CSV.', '📄');
-        }
-
-        function adminResetAll() {
-            if (!confirm('Reset ALL user balances to ₹0? This cannot be undone.')) return;
-            allUsers = loadUsers();
-            allUsers.forEach(u => { u.balance = 0; });
-            saveUsers(allUsers);
-            if (currentUser) {
-                currentUser = allUsers.find(u => u.id === currentUser.id);
-                updateBalanceDisplay();
-                renderTransactions();
-            }
-            refreshUsersTable();
-            updateAdminStats();
-            showToast('All balances reset to ₹0.', '🗑️');
-        }
-
-        // ============================================================
-        // USER DETAILS MODAL
-        // ============================================================
-        function showUserDetails(userId) {
-            allUsers = loadUsers();
-            const user = allUsers.find(u => u.id === userId);
-            if (!user) return;
-
-            const txList = (user.transactions || []).slice(-5).reverse().map(tx => {
-                const isPos = tx.amount > 0;
-                const color = isPos ? 'text-green-400' : 'text-red-400';
-                return `<div class="flex justify-between text-xs py-1.5 border-b border-white/5">
-                    <span class="text-gray-300">${tx.title}</span>
-                    <span class="${color} font-semibold">${isPos ? '+' : ''}${formatINR(tx.amount)}</span>
-                </div>`;
-            }).join('') || '<p class="text-xs text-gray-500 py-2">No transactions.</p>';
-
-            const modal = document.createElement('div');
-            modal.className = 'fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-[95]';
-            modal.innerHTML = `
-                <div class="glass-modal w-full max-w-md p-6 rounded-3xl border border-red-500/40">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-bold text-red-400">User Details</h3>
-                        <button onclick="this.closest('.fixed').remove()" class="text-gray-400 hover:text-white text-2xl leading-none">&times;</button>
-                    </div>
-                    <div class="flex items-center gap-3 mb-4 p-3 glass-card rounded-xl">
-                        <div class="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center text-red-400 border border-red-500/30 font-bold">${getInitials(user.name)}</div>
-                        <div>
-                            <h4 class="font-bold text-white">${user.name}</h4>
-                            <p class="text-[10px] text-gray-400">${user.email} • ${user.role.toUpperCase()}</p>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2 mb-4 text-xs">
-                        <div class="bg-white/5 rounded-lg p-2.5"><p class="text-[10px] text-gray-400">Phone</p><p class="text-white font-semibold mt-0.5">${user.phone}</p></div>
-                        <div class="bg-white/5 rounded-lg p-2.5"><p class="text-[10px] text-gray-400">Joined</p><p class="text-white font-semibold mt-0.5">${user.joined}</p></div>
-                        <div class="bg-white/5 rounded-lg p-2.5 col-span-2"><p class="text-[10px] text-gray-400">Balance</p><p class="text-green-400 font-bold text-base mt-0.5">${formatINR(user.balance)}</p></div>
-                    </div>
-                    <h4 class="text-xs font-semibold text-red-400 mb-2">Recent Transactions</h4>
-                    <div class="max-h-40 overflow-y-auto">${txList}</div>
+        const fields = document.getElementById('deposit-dynamic-fields');
+        if (gw === 'upi') {
+            fields.innerHTML = `
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1.5">Your UPI ID</label>
+                    <input type="text" id="deposit-upi" required placeholder="yourname@upi" class="w-full input-glass rounded-xl p-3.5 text-sm text-white placeholder-gray-500">
                 </div>
             `;
-            document.body.appendChild(modal);
-            modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+        } else if (gw === 'bank') {
+            fields.innerHTML = `
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1.5">Account Number</label>
+                    <input type="text" id="deposit-acc" required placeholder="1234567890" class="w-full input-glass rounded-xl p-3.5 text-sm text-white placeholder-gray-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1.5">IFSC Code</label>
+                    <input type="text" id="deposit-ifsc" required placeholder="HDFC0001234" class="w-full input-glass rounded-xl p-3.5 text-sm text-white placeholder-gray-500 uppercase">
+                </div>
+            `;
+        } else if (gw === 'usdt') {
+            fields.innerHTML = `
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1.5">USDT Wallet Address (TRC20)</label>
+                    <input type="text" id="deposit-usdt" required placeholder="T..." class="w-full input-glass rounded-xl p-3.5 text-sm text-white placeholder-gray-500">
+                </div>
+            `;
+        }
+    }
+
+    function handleDeposit(e) {
+        e.preventDefault();
+        const amt = parseFloat(document.getElementById('deposit-input').value);
+        if (isNaN(amt) || amt <= 0) { showToast('Enter a valid amount.', '⚠️'); return; }
+        if (!depositGateway) { showToast('Please select a payment method.', '⚠️'); return; }
+
+        let detail = '';
+        if (depositGateway === 'upi') {
+            const upi = document.getElementById('deposit-upi')?.value.trim();
+            if (!upi || !/^[\w.\-]{2,}@[\w]{2,}$/.test(upi)) { showToast('Enter a valid UPI ID (e.g. name@upi).', '⚠️'); return; }
+            detail = 'UPI: ' + upi;
+        } else if (depositGateway === 'bank') {
+            const acc = document.getElementById('deposit-acc')?.value.trim();
+            const ifsc = document.getElementById('deposit-ifsc')?.value.trim().toUpperCase();
+            if (!acc || acc.length < 8) { showToast('Enter a valid account number.', '⚠️'); return; }
+            if (!ifsc || !/^[A-Z]{4}0[A-Z0-9]{6}$/.test(ifsc)) { showToast('Enter a valid IFSC (e.g. HDFC0001234).', '⚠️'); return; }
+            detail = `Bank: ${acc} (${ifsc})`;
+        } else {
+            const wallet = document.getElementById('deposit-usdt')?.value.trim();
+            if (!wallet || wallet.length < 10) { showToast('Enter a valid USDT address.', '⚠️'); return; }
+            detail = 'USDT: ' + wallet.slice(0, 6) + '...' + wallet.slice(-4);
         }
 
-        // ============================================================
-        // MODAL OVERLAY & ESC
-        // ============================================================
-        document.getElementById('withdrawModal').addEventListener('click', function(e) {
-            if (e.target === this) closeWithdrawModal();
+        currentUser.balance += amt;
+        addTransaction(`Deposit via ${depositGateway.toUpperCase()}`, amt, 'Just now', 'deposit');
+        updateBalanceDisplay();
+        renderProfile();
+        saveCurrentUser();
+        closeDepositModal();
+        showToast(`Deposit of ${formatINR(amt)} successful via ${detail}`, '✅');
+        if (currentUser.role === 'admin') { refreshUsersTable(); updateAdminStats(); }
+    }
+
+    // ============================================================
+    // WITHDRAW MODAL
+    // ============================================================
+    function openWithdrawModal() {
+        if (!currentUser) return;
+        withdrawGateway = null;
+        document.getElementById('withdraw-input').value = '';
+        document.getElementById('withdraw-dynamic-fields').innerHTML = '';
+        document.getElementById('modal-min-limit').innerText = formatINR(minLimit);
+        ['upi', 'bank', 'usdt'].forEach(g => document.getElementById('ww-gw-' + g).classList.remove('selected'));
+        document.getElementById('withdrawModal').classList.remove('hidden');
+        document.getElementById('withdrawModal').classList.add('flex');
+    }
+    function closeWithdrawModal() {
+        document.getElementById('withdrawModal').classList.remove('flex');
+        document.getElementById('withdrawModal').classList.add('hidden');
+    }
+
+    function selectWithdrawGateway(gw) {
+        withdrawGateway = gw;
+        ['upi', 'bank', 'usdt'].forEach(g => {
+            const el = document.getElementById('ww-gw-' + g);
+            if (g === gw) el.classList.add('selected'); else el.classList.remove('selected');
         });
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') closeWithdrawModal();
+
+        const fields = document.getElementById('withdraw-dynamic-fields');
+        const p = currentUser.payout || { upi: '', bank: { acc: '', ifsc: '' }, usdt: '' };
+
+        if (gw === 'upi') {
+            fields.innerHTML = `
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1.5">UPI ID</label>
+                    <input type="text" id="withdraw-upi" required value="${p.upi || ''}" placeholder="yourname@upi" class="w-full input-glass rounded-xl p-3.5 text-sm text-white placeholder-gray-500">
+                </div>
+            `;
+        } else if (gw === 'bank') {
+            fields.innerHTML = `
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1.5">Account Number</label>
+                    <input type="text" id="withdraw-acc" required value="${p.bank?.acc || ''}" placeholder="1234567890" class="w-full input-glass rounded-xl p-3.5 text-sm text-white placeholder-gray-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1.5">IFSC Code</label>
+                    <input type="text" id="withdraw-ifsc" required value="${p.bank?.ifsc || ''}" placeholder="HDFC0001234" class="w-full input-glass rounded-xl p-3.5 text-sm text-white placeholder-gray-500 uppercase">
+                </div>
+            `;
+        } else if (gw === 'usdt') {
+            fields.innerHTML = `
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1.5">USDT Wallet Address (TRC20)</label>
+                    <input type="text" id="withdraw-usdt" required value="${p.usdt || ''}" placeholder="T..." class="w-full input-glass rounded-xl p-3.5 text-sm text-white placeholder-gray-500">
+                </div>
+            `;
+        }
+    }
+
+    function handleWithdraw(e) {
+        e.preventDefault();
+        const amt = parseFloat(document.getElementById('withdraw-input').value);
+        if (isNaN(amt) || amt <= 0) { showToast('Enter a valid amount.', '⚠️'); return; }
+        if (amt < minLimit) { showToast(`Minimum withdrawal is ${formatINR(minLimit)}`, '⚠️'); return; }
+        if (amt > currentUser.balance) { showToast('Insufficient balance.', '❌'); return; }
+        if (!withdrawGateway) { showToast('Please select a withdrawal method.', '⚠️'); return; }
+
+        currentUser.payout = currentUser.payout || { upi: '', bank: { acc: '', ifsc: '' }, usdt: '' };
+        let detail = '';
+
+        if (withdrawGateway === 'upi') {
+            const upi = document.getElementById('withdraw-upi')?.value.trim();
+            if (!upi || !/^[\w.\-]{2,}@[\w]{2,}$/.test(upi)) { showToast('Enter a valid UPI ID.', '⚠️'); return; }
+            currentUser.payout.upi = upi;
+            detail = 'UPI: ' + upi;
+        } else if (withdrawGateway === 'bank') {
+            const acc = document.getElementById('withdraw-acc')?.value.trim();
+            const ifsc = document.getElementById('withdraw-ifsc')?.value.trim().toUpperCase();
+            if (!acc || acc.length < 8) { showToast('Enter a valid account number.', '⚠️'); return; }
+            if (!ifsc || !/^[A-Z]{4}0[A-Z0-9]{6}$/.test(ifsc)) { showToast('Enter a valid IFSC.', '⚠️'); return; }
+            currentUser.payout.bank = { acc, ifsc };
+            detail = `Bank: ${acc} (${ifsc})`;
+        } else {
+            const wallet = document.getElementById('withdraw-usdt')?.value.trim();
+            if (!wallet || wallet.length < 10) { showToast('Enter a valid USDT address.', '⚠️'); return; }
+            currentUser.payout.usdt = wallet;
+            detail = 'USDT: ' + wallet.slice(0, 6) + '...' + wallet.slice(-4);
+        }
+
+        currentUser.balance -= amt;
+        addTransaction(`Withdrawal via ${withdrawGateway.toUpperCase()}`, -amt, 'Just now', 'withdraw');
+        updateBalanceDisplay();
+        renderProfile();
+        saveCurrentUser();
+        closeWithdrawModal();
+        showToast(`Withdrawal of ${formatINR(amt)} submitted via ${detail}`, '✅');
+        if (currentUser.role === 'admin') { refreshUsersTable(); updateAdminStats(); }
+    }
+
+    // ============================================================
+    // ADMIN
+    // ============================================================
+    function refreshUsersTable() {
+        if (!currentUser || currentUser.role !== 'admin') return;
+        allUsers = loadUsers();
+        const tbody = document.getElementById('users-table-body');
+        tbody.innerHTML = '';
+        if (allUsers.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" class="p-6 text-center text-xs text-gray-500">No users registered yet.</td></tr>';
+            return;
+        }
+        allUsers.forEach(u => {
+            const roleColor = u.role === 'admin'
+                ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30'
+                : 'bg-green-500/20 text-green-400 border-green-500/30';
+            const tr = document.createElement('tr');
+            tr.className = 'border-b border-white/[0.05] user-row transition';
+            tr.innerHTML = `
+                <td class="p-3">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center text-red-400 border border-red-500/30 text-[10px] font-bold">${getInitials(u.name)}</div>
+                        <span class="font-semibold text-white cursor-pointer hover:text-red-400 transition" onclick="showUserDetails('${u.id}')">${u.name}</span>
+                    </div>
+                </td>
+                <td class="p-3 text-gray-400">${u.email}</td>
+                <td class="p-3 text-gray-400">${u.phone}</td>
+                <td class="p-3 font-bold text-green-400">${formatINR(u.balance)}</td>
+                <td class="p-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-semibold border ${roleColor}">${u.role.toUpperCase()}</span></td>
+                <td class="p-3 text-gray-400">${u.joined}</td>
+                <td class="p-3 text-right whitespace-nowrap">
+                    <button onclick="adminAdjustUser('${u.id}', 1)" class="px-2 py-1 rounded-lg bg-green-500/20 text-green-400 border border-green-500/30 text-[10px] font-semibold hover:bg-green-500/30 mr-1">+ Add</button>
+                    <button onclick="adminAdjustUser('${u.id}', -1)" class="px-2 py-1 rounded-lg bg-red-500/20 text-red-400 border border-red-500/30 text-[10px] font-semibold hover:bg-red-500/30">- Deduct</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
         });
+    }
 
-        // ============================================================
-        // SESSION PERSISTENCE (auto login on refresh)
-        // ============================================================
-        window.addEventListener('DOMContentLoaded', () => {
-            // Load min limit
-            const savedLimit = localStorage.getItem('tg_minLimit_v2');
-            if (savedLimit) minLimit = parseFloat(savedLimit);
-            const minInput = document.getElementById('min-withdraw');
-            if (minInput) minInput.value = minLimit;
-            document.getElementById('current-limit-display').innerText = formatINR(minLimit);
-            document.getElementById('modal-min-limit').innerText = formatINR(minLimit);
-
-            // Auto-restore session
-            const sess = sessionStorage.getItem('tg_session_v2');
-            if (sess) {
-                try {
-                    const data = JSON.parse(sess);
-                    allUsers = loadUsers();
-                    const user = allUsers.find(u => u.id === data.id);
-                    if (user) { currentUser = user; startApp(user); return; }
-                } catch (err) {}
-            }
+    function searchUsers(query) {
+        const tbody = document.getElementById('users-table-body');
+        if (!tbody) return;
+        const q = query.toLowerCase().trim();
+        tbody.querySelectorAll('tr').forEach(row => {
+            row.style.display = (!q || row.innerText.toLowerCase().includes(q)) ? '' : 'none';
         });
+    }
 
-        // Save session inside startApp
-        const _origStartApp = startApp;
-        startApp = function(user) {
-            sessionStorage.setItem('tg_session_v2', JSON.stringify({ id: user.id, email: user.email }));
-            _origStartApp(user);
-        };
+    function adminAdjustUser(userId, sign) {
+        const amtStr = prompt(`Enter amount to ${sign === 1 ? 'ADD to' : 'DEDUCT from'} this user (₹):`);
+        if (!amtStr) return;
+        const amt = parseFloat(amtStr);
+        if (isNaN(amt) || amt <= 0) { showToast('Invalid amount.', '⚠️'); return; }
+        allUsers = loadUsers();
+        const user = allUsers.find(u => u.id === userId);
+        if (!user) return;
+        if (sign === -1 && amt > user.balance) { showToast('Cannot deduct more than user balance.', '❌'); return; }
+        user.balance += sign * amt;
+        user.transactions = user.transactions || [];
+        user.transactions.push({
+            title: sign === 1 ? 'Admin Credit' : 'Admin Debit',
+            amount: sign * amt,
+            time: 'Just now',
+            type: sign === 1 ? 'deposit' : 'withdraw'
+        });
+        saveUsers(allUsers);
+        if (currentUser.id === userId) {
+            currentUser = user;
+            updateBalanceDisplay(); renderTransactions(); renderProfile();
+        }
+        refreshUsersTable();
+        updateAdminStats();
+        showToast(`${sign === 1 ? 'Added' : 'Deducted'} ${formatINR(amt)} ${sign === 1 ? 'to' : 'from'} ${user.name}.`, '✅');
+    }
 
-        console.log('%c✅ Trust Gateway loaded!', 'color:#ef4444;font-weight:bold;font-size:14px;');
-        console.log('%c🔐 Admin: admin@gmail.com / admin2008', 'color:#94a3b8;font-size:12px;');
-    </script>
+    function updateAdminStats() {
+        if (!currentUser || currentUser.role !== 'admin') return;
+        allUsers = loadUsers();
+        let totalDeposits = 0, totalWithdrawn = 0;
+        allUsers.forEach(u => {
+            (u.transactions || []).forEach(t => {
+                if (t.amount > 0) totalDeposits += t.amount;
+                else totalWithdrawn += Math.abs(t.amount);
+            });
+        });
+        document.getElementById('stat-total-users').innerText = allUsers.length;
+        document.getElementById('stat-total-deposits').innerText = formatINR(totalDeposits);
+        document.getElementById('stat-total-withdrawn').innerText = formatINR(totalWithdrawn);
+        document.getElementById('stat-min-withdraw').innerText = formatINR(minLimit);
+    }
+
+    function saveAdminSettings() {
+        const limit = parseFloat(document.getElementById('min-withdraw').value);
+        if (isNaN(limit) || limit < 0) { showToast('Enter a valid limit.', '⚠️'); return; }
+        minLimit = limit;
+        localStorage.setItem('tg_minLimit_v3', minLimit);
+        document.getElementById('current-limit-display').innerText = formatINR(minLimit);
+        document.getElementById('modal-min-limit').innerText = formatINR(minLimit);
+        updateAdminStats();
+        showToast(`Minimum withdrawal limit set to ${formatINR(minLimit)}.`, '✅');
+    }
+
+    function adminExport() {
+        allUsers = loadUsers();
+        let csv = 'Name,Email,Phone,Balance,Role,Joined\n';
+        allUsers.forEach(u => {
+            csv += `"${u.name}","${u.email}","${u.phone}",${u.balance},${u.role},"${u.joined}"\n`;
+        });
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = 'trust_gateway_users.csv';
+        a.click(); URL.revokeObjectURL(url);
+        showToast('Users exported to CSV.', '📄');
+    }
+
+    function adminResetAll() {
+        if (!confirm('Reset ALL user balances to ₹0? This cannot be undone.')) return;
+        allUsers = loadUsers();
+        allUsers.forEach(u => { u.balance = 0; });
+        saveUsers(allUsers);
+        if (currentUser) {
+            currentUser = allUsers.find(u => u.id === currentUser.id);
+            updateBalanceDisplay(); renderTransactions(); renderProfile();
+        }
+        refreshUsersTable(); updateAdminStats();
+        showToast('All balances reset to ₹0.', '🗑️');
+    }
+
+    function showUserDetails(userId) {
+        allUsers = loadUsers();
+        const user = allUsers.find(u => u.id === userId);
+        if (!user) return;
+        const txList = (user.transactions || []).slice(-8).reverse().map(tx => {
+            const isPos = tx.amount > 0;
+            const color = isPos ? 'text-green-400' : 'text-red-400';
+            return `<div class="flex justify-between text-xs py-1.5 border-b border-white/5">
+                <span class="text-gray-300">${tx.title}</span>
+                <span class="${color} font-semibold">${isPos ? '+' : ''}${formatINR(tx.amount)}</span>
+            </div>`;
+        }).join('') || '<p class="text-xs text-gray-500 py-2">No transactions.</p>';
+
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-[95]';
+        modal.innerHTML = `
+            <div class="glass-modal w-full max-w-md p-6 rounded-3xl border border-red-500/40 max-h-[90vh] overflow-y-auto">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold text-red-400">User Details</h3>
+                    <button onclick="this.closest('.fixed').remove()" class="text-gray-400 hover:text-white text-2xl leading-none">&times;</button>
+                </div>
+                <div class="flex items-center gap-3 mb-4 p-3 glass-card rounded-xl">
+                    <div class="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center text-red-400 border border-red-500/30 font-bold">${getInitials(user.name)}</div>
+                    <div>
+                                            <h4 class="font-bold text-white">${user.name}</h4>
+                        <p class="text-[10px] text-gray-400">${user.email} • ${user.role.toUpperCase()}</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-2 mb-4 text-xs">
+                    <div class="bg-white/5 rounded-lg p-2.5"><p class="text-[10px] text-gray-400">Phone</p><p class="text-white font-semibold mt-0.5">${user.phone}</p></div>
+                    <div class="bg-white/5 rounded-lg p-2.5"><p class="text-[10px] text-gray-400">Joined</p><p class="text-white font-semibold mt-0.5">${user.joined}</p></div>
+                    <div class="bg-white/5 rounded-lg p-2.5 col-span-2"><p class="text-[10px] text-gray-400">Balance</p><p class="text-green-400 font-bold text-base mt-0.5">${formatINR(user.balance)}</p></div>
+                </div>
+                <h4 class="text-xs font-semibold text-red-400 mb-2">Recent Transactions</h4>
+                <div class="max-h-40 overflow-y-auto">${txList}</div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+    }
+
+    // ============================================================
+    // MODAL OVERLAY & ESC
+    // ============================================================
+    document.getElementById('withdrawModal').addEventListener('click', function(e) {
+        if (e.target === this) closeWithdrawModal();
+    });
+    document.getElementById('depositModal').addEventListener('click', function(e) {
+        if (e.target === this) closeDepositModal();
+    });
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') { closeWithdrawModal(); closeDepositModal(); }
+    });
+
+    // ============================================================
+    // INIT / SESSION RESTORE
+    // ============================================================
+    window.addEventListener('DOMContentLoaded', () => {
+        // Load saved min limit
+        const savedLimit = localStorage.getItem('tg_minLimit_v3');
+        if (savedLimit) minLimit = parseFloat(savedLimit);
+        const minInput = document.getElementById('min-withdraw');
+        if (minInput) minInput.value = minLimit;
+        document.getElementById('current-limit-display').innerText = formatINR(minLimit);
+        document.getElementById('modal-min-limit').innerText = formatINR(minLimit);
+
+        // Auto-restore session
+        const sess = sessionStorage.getItem('tg_session_v3');
+        if (sess) {
+            try {
+                const data = JSON.parse(sess);
+                allUsers = loadUsers();
+                const user = allUsers.find(u => u.id === data.id);
+                if (user) { currentUser = user; startApp(user); return; }
+            } catch (err) {}
+        }
+    });
+
+    console.log('%c✅ Trust Gateway Premium v3 loaded!', 'color:#ef4444;font-weight:bold;font-size:14px;');
+    console.log('%c🔐 Admin: admin@gmail.com / admin2008', 'color:#94a3b8;font-size:12px;');
+</script>
 </body>
 </html>
