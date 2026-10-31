@@ -5,14 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trust Gateway | Premium Secure Wallet</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { font-family: 'Inter', sans-serif; }
         body {
             background: radial-gradient(circle at 0% 0%, #0a0a0a, #0f0f12, #1a0b0e);
-            min-height: 100vh;
-            margin: 0;
-            overflow-x: hidden;
+            min-height: 100vh; margin: 0; overflow-x: hidden;
         }
         .glass-panel {
             background: rgba(20, 20, 25, 0.55);
@@ -24,40 +22,35 @@
         .glass-card {
             background: rgba(30, 20, 25, 0.5);
             backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 70, 70, 0.25);
-            box-shadow: 0 20px 35px -12px rgba(200, 30, 30, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            box-shadow: 0 20px 35px -12px rgba(200, 30, 30, 0.3);
             transition: transform 0.25s ease, box-shadow 0.3s ease;
         }
         .glass-card:hover {
-            box-shadow: 0 25px 45px -12px rgba(220, 38, 38, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 45px -12px rgba(220, 38, 38, 0.45);
             transform: translateY(-3px);
         }
         .glass-modal {
             background: rgba(12, 12, 16, 0.92);
             backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
             border: 1px solid rgba(239, 68, 68, 0.5);
-            box-shadow: 0 30px 60px rgba(180, 20, 20, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.03);
+            box-shadow: 0 30px 60px rgba(180, 20, 20, 0.5);
         }
-        .glow-red {
-            text-shadow: 0 0 20px rgba(239, 68, 68, 0.7), 0 0 40px rgba(220, 38, 38, 0.3);
-        }
+        .glow-red { text-shadow: 0 0 20px rgba(239, 68, 68, 0.7); }
         .btn-primary {
             background: linear-gradient(145deg, #dc2626, #b91c1c);
             border: 1px solid rgba(255, 100, 100, 0.4);
-            box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
             transition: all 0.2s ease;
         }
         .btn-primary:hover {
             background: linear-gradient(145deg, #ef4444, #dc2626);
-            box-shadow: 0 12px 28px rgba(239, 68, 68, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            box-shadow: 0 12px 28px rgba(239, 68, 68, 0.6);
             transform: scale(1.02);
         }
         .btn-outline {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
             transition: all 0.2s ease;
         }
         .btn-outline:hover {
@@ -71,11 +64,8 @@
             text-shadow: 0 0 30px rgba(239, 68, 68, 0.6);
         }
         .float-orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(60px);
-            opacity: 0.25;
-            z-index: 0;
+            position: absolute; border-radius: 50%;
+            filter: blur(60px); opacity: 0.25; z-index: 0;
             pointer-events: none;
         }
         .sidebar-nav button { transition: all 0.2s ease; }
@@ -94,36 +84,82 @@
             outline: none;
         }
         .login-bg { background: radial-gradient(circle at 30% 40%, #1a0b0e, #0a0a0a); }
+        .tab-btn-active {
+            background: rgba(220, 38, 38, 0.2) !important;
+            color: #f87171 !important;
+            border-color: rgba(239, 68, 68, 0.4) !important;
+        }
+        .user-row:hover { background: rgba(239, 68, 68, 0.06); }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(239, 68, 68, 0.3); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(239, 68, 68, 0.5); }
     </style>
 </head>
 <body>
 
-    <!-- LOGIN OVERLAY -->
-    <div id="loginScreen" class="fixed inset-0 z-[100] flex items-center justify-center p-4 login-bg">
+    <!-- ================= AUTH SCREEN (LOGIN / SIGNUP) ================= -->
+    <div id="authScreen" class="fixed inset-0 z-[100] flex items-center justify-center p-4 login-bg overflow-y-auto">
         <div class="float-orb w-[400px] h-[400px] bg-red-900/40 top-[-100px] left-[-100px]"></div>
         <div class="float-orb w-[500px] h-[500px] bg-red-800/20 bottom-[-200px] right-[-150px]"></div>
-        <div class="glass-modal w-full max-w-md p-8 rounded-3xl relative z-10 border border-red-500/30">
-            <div class="text-center mb-8">
+
+        <div class="glass-modal w-full max-w-md p-8 rounded-3xl relative z-10 border border-red-500/30 my-8">
+            <div class="text-center mb-6">
                 <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-tr from-red-600 to-red-400 flex items-center justify-center font-bold text-2xl shadow-lg shadow-red-600/40 mb-4">TG</div>
                 <h2 class="text-2xl font-bold text-white tracking-tight">Trust Gateway</h2>
                 <p class="text-sm text-red-400/80 mt-1">Premium Secure Wallet</p>
             </div>
-            <form onsubmit="handleLogin(event)" class="space-y-5">
+
+            <!-- Auth Tabs -->
+            <div class="flex bg-black/40 rounded-xl p-1 mb-6 border border-red-500/20">
+                <button id="tab-login-btn" onclick="switchAuthTab('login')" class="flex-1 py-2.5 rounded-lg text-sm font-semibold text-red-400 bg-red-600/20 transition">Login</button>
+                <button id="tab-signup-btn" onclick="switchAuthTab('signup')" class="flex-1 py-2.5 rounded-lg text-sm font-semibold text-gray-400 transition">Sign Up</button>
+            </div>
+
+            <!-- LOGIN FORM -->
+            <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-medium text-gray-300 mb-1.5">Email / User ID</label>
-                    <input type="text" id="loginEmail" value="john@trustgateway.in" required class="w-full input-glass rounded-xl p-3.5 text-sm text-white placeholder-gray-500">
+                    <label class="block text-xs font-medium text-gray-300 mb-1.5">Email</label>
+                    <input type="email" id="loginEmail" required placeholder="john@example.com" class="w-full input-glass rounded-xl p-3.5 text-sm text-white placeholder-gray-500">
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-gray-300 mb-1.5">Password</label>
-                    <input type="password" id="loginPassword" value="password" required class="w-full input-glass rounded-xl p-3.5 text-sm text-white placeholder-gray-500">
+                    <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full input-glass rounded-xl p-3.5 text-sm text-white placeholder-gray-500">
                 </div>
                 <button type="submit" class="w-full btn-primary py-3.5 rounded-xl font-semibold text-sm tracking-wide text-white">Sign In Securely</button>
+                <p id="loginError" class="text-xs text-red-400 text-center hidden"></p>
+                <p class="text-[10px] text-center text-gray-500 pt-1">Demo: admin@trustgateway.in / admin123</p>
             </form>
-            <p class="text-[10px] text-center text-gray-500 mt-6">Demo login: any credentials work. Click Sign In.</p>
+
+            <!-- SIGNUP FORM -->
+            <form id="signupForm" onsubmit="handleSignup(event)" class="space-y-4 hidden">
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1.5">Full Name</label>
+                    <input type="text" id="signupName" required placeholder="John Doe" class="w-full input-glass rounded-xl p-3.5 text-sm text-white placeholder-gray-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1.5">Email</label>
+                    <input type="email" id="signupEmail" required placeholder="john@example.com" class="w-full input-glass rounded-xl p-3.5 text-sm text-white placeholder-gray-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1.5">Phone Number</label>
+                    <input type="tel" id="signupPhone" required placeholder="+91 98765 43210" class="w-full input-glass rounded-xl p-3.5 text-sm text-white placeholder-gray-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1.5">Password</label>
+                    <input type="password" id="signupPassword" required placeholder="Min 6 characters" minlength="6" class="w-full input-glass rounded-xl p-3.5 text-sm text-white placeholder-gray-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1.5">Initial Deposit (₹)</label>
+                    <input type="number" id="signupDeposit" required placeholder="1000" min="0" value="5000" class="w-full input-glass rounded-xl p-3.5 text-sm text-white placeholder-gray-500">
+                </div>
+                <button type="submit" class="w-full btn-primary py-3.5 rounded-xl font-semibold text-sm tracking-wide text-white">Create Account</button>
+                <p id="signupError" class="text-xs text-red-400 text-center hidden"></p>
+            </form>
         </div>
     </div>
 
-    <!-- MAIN APP -->
+    <!-- ================= MAIN APP ================= -->
     <div id="appContainer" class="hidden flex h-screen overflow-hidden">
 
         <!-- Sidebar -->
@@ -140,17 +176,17 @@
                 </div>
 
                 <div class="glass-card p-4 rounded-xl mb-6 flex items-center space-x-3">
-                    <div class="w-11 h-11 rounded-full bg-red-500/20 flex items-center justify-center font-bold text-red-400 border border-red-500/40 text-lg">JD</div>
-                    <div>
-                        <h4 class="font-semibold text-sm text-white">John Doe</h4>
-                        <span class="text-xs text-red-400 flex items-center gap-1">
-                            <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span> Verified User
+                    <div id="sidebar-avatar" class="w-11 h-11 rounded-full bg-red-500/20 flex items-center justify-center font-bold text-red-400 border border-red-500/40 text-lg">JD</div>
+                    <div class="min-w-0">
+                        <h4 id="sidebar-name" class="font-semibold text-sm text-white truncate">John Doe</h4>
+                        <span id="sidebar-role" class="text-xs text-red-400 flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span> User
                         </span>
                     </div>
                 </div>
 
                 <nav class="space-y-2 sidebar-nav">
-                    <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center space-x-3 p-3.5 rounded-xl bg-red-600/20 text-red-400 border border-red-500/40 transition text-left">
+                    <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center space-x-3 p-3.5 rounded-xl bg-red-600/20 text-red-400 border border-red-500/40 transition text-left tab-btn-active">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
                         <span class="font-medium text-sm">Dashboard</span>
                     </button>
@@ -158,21 +194,26 @@
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                         <span class="font-medium text-sm">Withdraw</span>
                     </button>
-                    <button onclick="switchTab('admin')" id="nav-admin" class="w-full flex items-center space-x-3 p-3.5 rounded-xl text-gray-300 transition text-left">
+                    <button onclick="switchTab('admin')" id="nav-admin" class="w-full flex items-center space-x-3 p-3.5 rounded-xl text-gray-300 transition text-left hidden">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
                         <span class="font-medium text-sm">Admin Panel</span>
                     </button>
                 </nav>
             </div>
 
-            <div class="text-[10px] text-gray-500 text-center border-t border-white/5 pt-4 mt-4">
-                Trust Gateway &copy; 2026<br>Premium Edition
+            <div class="space-y-3">
+                <button onclick="handleLogout()" class="w-full flex items-center justify-center space-x-2 p-3 rounded-xl text-red-400 hover:bg-red-500/10 border border-red-500/20 transition text-sm font-medium">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                    <span>Logout</span>
+                </button>
+                <div class="text-[10px] text-gray-500 text-center border-t border-white/5 pt-3">
+                    Trust Gateway &copy; 2026<br>Premium Edition
+                </div>
             </div>
         </aside>
 
         <!-- Main -->
         <main class="flex-1 flex flex-col overflow-y-auto relative">
-
             <div class="float-orb w-[350px] h-[350px] bg-red-900/30 top-[-100px] right-[-50px]"></div>
             <div class="float-orb w-[400px] h-[400px] bg-red-800/15 bottom-[-150px] left-[-100px]"></div>
 
@@ -192,11 +233,10 @@
 
             <!-- DASHBOARD TAB -->
             <div id="tab-dashboard" class="p-4 md:p-8 space-y-6 relative z-10">
-
                 <div class="glass-card p-6 md:p-8 rounded-3xl shadow-2xl relative overflow-hidden">
                     <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-red-600/10 rounded-full blur-3xl"></div>
                     <p class="text-xs text-gray-400 uppercase tracking-widest font-medium">Total Available Balance</p>
-                    <h2 id="display-balance" class="text-5xl md:text-6xl font-extrabold mt-2 balance-glow">₹24,58,000.00</h2>
+                    <h2 id="display-balance" class="text-5xl md:text-6xl font-extrabold mt-2 balance-glow">₹0.00</h2>
                     <p class="text-xs text-red-400/70 mt-1">INR • Updated just now</p>
                     <div class="flex flex-wrap gap-3 mt-6">
                         <button onclick="openWithdrawModal()" class="btn-primary px-6 py-3 rounded-xl font-medium text-sm text-white">Withdraw Funds</button>
@@ -208,48 +248,8 @@
                     <h3 class="text-md font-bold mb-4 text-red-400 flex items-center gap-2">
                         <span class="w-1.5 h-5 bg-red-500 rounded-full"></span> Recent Transactions
                     </h3>
-                    <div id="transactions-list" class="space-y-3">
-                        <div class="flex justify-between items-center p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.06] transition">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center text-green-400 border border-green-500/20">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
-                                </div>
-                                <div>
-                                    <h4 class="font-semibold text-xs md:text-sm text-white">Payment Received</h4>
-                                    <span class="text-[10px] text-gray-400">Today, 10:45 AM</span>
-                                </div>
-                            </div>
-                            <span class="text-green-400 font-bold text-xs md:text-sm">+₹1,20,000.00</span>
-                        </div>
-
-                        <div class="flex justify-between items-center p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.06] transition">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center text-red-400 border border-red-500/20">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
-                                </div>
-                                <div>
-                                    <h4 class="font-semibold text-xs md:text-sm text-white">Withdrawal Sent</h4>
-                                    <span class="text-[10px] text-gray-400">Yesterday, 04:15 PM</span>
-                                </div>
-                            </div>
-                            <span class="text-red-400 font-bold text-xs md:text-sm">-₹45,000.00</span>
-                        </div>
-
-                        <div class="flex justify-between items-center p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.06] transition">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center text-green-400 border border-green-500/20">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
-                                </div>
-                                <div>
-                                    <h4 class="font-semibold text-xs md:text-sm text-white">UPI Transfer</h4>
-                                    <span class="text-[10px] text-gray-400">24 Mar, 02:30 PM</span>
-                                </div>
-                            </div>
-                            <span class="text-green-400 font-bold text-xs md:text-sm">+₹8,500.00</span>
-                        </div>
-                    </div>
+                    <div id="transactions-list" class="space-y-3"></div>
                 </div>
-
             </div>
 
             <!-- ADMIN TAB -->
@@ -260,76 +260,785 @@
                         <span>Admin Control Center</span>
                     </h3>
 
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div class="glass-card p-5 rounded-2xl space-y-4">
-                            <h4 class="font-semibold text-sm text-white flex items-center gap-2">
-                                <span class="w-1.5 h-4 bg-red-500 rounded-full"></span> Adjust User Balance
-                            </h4>
-                            <input type="number" id="admin-amount" placeholder="Enter Amount (₹)" class="w-full input-glass rounded-xl p-3.5 text-sm text-white placeholder-gray-500">
-                            <div class="flex gap-3">
-                                <button onclick="adminUpdateBalance(1)" class="flex-1 btn-primary py-3 rounded-xl font-semibold text-xs text-white">Add Funds</button>
-                                <button onclick="adminUpdateBalance(-1)" class="flex-1 btn-outline py-3 rounded-xl font-semibold text-xs text-gray-200">Deduct Funds</button>
-                            </div>
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                        <div class="glass-card p-4 rounded-xl">
+                            <p class="text-[10px] text-gray-400 uppercase">Total Users</p>
+                            <p id="stat-total-users" class="text-2xl font-bold text-white mt-1">0</p>
                         </div>
-
-                        <div class="glass-card p-5 rounded-2xl space-y-4">
-                            <h4 class="font-semibold text-sm text-white flex items-center gap-2">
-                                <span class="w-1.5 h-4 bg-red-500 rounded-full"></span> Withdrawal Settings
-                            </h4>
-                            <label class="block text-xs text-gray-400">Minimum Withdrawal Limit (₹)</label>
-                            <input type="number" id="min-withdraw" value="500" class="w-full input-glass rounded-xl p-3.5 text-sm text-white">
-                            <button onclick="saveAdminSettings()" class="w-full btn-outline py-3 rounded-xl font-semibold text-xs text-gray-200">Save Limit</button>
-                            <p class="text-[10px] text-gray-500">Current limit: <span id="current-limit-display" class="text-red-400 font-semibold">₹500.00</span></p>
+                        <div class="glass-card p-4 rounded-xl">
+                            <p class="text-[10px] text-gray-400 uppercase">Total Deposits</p>
+                            <p id="stat-total-deposits" class="text-2xl font-bold text-green-400 mt-1">₹0</p>
                         </div>
+                        <div class="glass-card p-4 rounded-xl">
+                            <p class="text-[10px] text-gray-400 uppercase">Total Withdrawn</p>
+                            <p id="stat-total-withdrawn" class="text-2xl font-bold text-red-400 mt-1">₹0</p>
+                        </div>
+                        <div class="glass-card p-4 rounded-xl">
+                            <p class="text-[10px] text-gray-400 uppercase">Min Withdraw</p>
+                            <p id="stat-min-withdraw" class="text-2xl font-bold text-white mt-1">₹500</p>
+                        </div>
+                    </div>
 
-                        <div class="glass-card p-5 rounded-2xl space-y-4 lg:col-span-2">
+                    <!-- Users Table -->
+                    <div class="glass-card rounded-2xl overflow-hidden">
+                        <div class="p-4 border-b border-red-500/20 flex justify-between items-center">
                             <h4 class="font-semibold text-sm text-white flex items-center gap-2">
-                                <span class="w-1.5 h-4 bg-red-500 rounded-full"></span> Quick Admin Actions
+                                <span class="w-1.5 h-4 bg-red-500 rounded-full"></span> Registered Users
                             </h4>
-                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                                <button onclick="adminFreeze()" class="btn-outline py-3 rounded-xl text-xs font-medium text-red-400 border-red-500/30 hover:bg-red-500/10">Freeze Account</button>
-                                <button onclick="adminReset()" class="btn-outline py-3 rounded-xl text-xs font-medium text-gray-300">Reset Balance to Zero</button>
-                                <button onclick="adminExport()" class="btn-outline py-3 rounded-xl text-xs                    stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>'
+                            <button onclick="refreshUsersTable()" class="text-xs text-red-400 hover:text-red-300 font-medium flex items-center gap-1">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                                Refresh
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead class="bg-black/40 text-[10px] uppercase text-gray-400">
+                                    <tr>
+                                        <th class="p-3">User<script>
+    // =====================================================
+    //  STATE & STORAGE
+    // =====================================================
+    let currentUser = null;
+    let minLimit = 500;
+
+    // Load users from localStorage or seed demo data
+    function loadUsers() {
+        let users = localStorage.getItem('tg_users');
+        if (!users) {
+            users = [
+                {
+                    id: 'admin-001',
+                    name: 'Admin',
+                    email: 'admin@trustgateway.in',
+                    phone: '+91 90000 00001',
+                    password: 'admin123',
+                    balance: 0,
+                    role: 'admin',
+                    joined: '2026-01-01',
+                    transactions: []
+                },
+                {
+                    id: 'user-001',
+                    name: 'John Doe',
+                    email: 'john@example.com',
+                    phone: '+91 98765 43210',
+                    password: 'john123',
+                    balance: 2458000,
+                    role: 'user',
+                    joined: '2026-02-15',
+                    transactions: [
+                        { title: 'Payment Received', amount: 120000, time: 'Today, 10:45 AM' },
+                        { title: 'Withdrawal Sent', amount: -45000, time: 'Yesterday, 04:15 PM' },
+                        { title: 'UPI Transfer', amount: 8500, time: '24 Mar, 02:30 PM' }
+                    ]
+                }
+            ];
+            localStorage.setItem('tg_users', JSON.stringify(users));
+        } else {
+            users = JSON.parse(users);
+        }
+        return users;
+    }
+
+    function saveUsers(users) {
+        localStorage.setItem('tg_users', JSON.stringify(users));
+    }
+
+    let allUsers = loadUsers();
+
+    // =====================================================
+    //  UTILITIES
+    // =====================================================
+    const formatINR = (num) => new Intl.NumberFormat('en-IN', {
+        style: 'currency', currency: 'INR',
+        minimumFractionDigits: 2, maximumFractionDigits: 2
+    }).format(num);
+
+    function showToast(message, icon = '✅') {
+        const toast = document.getElementById('toast');
+        document.getElementById('toast-message').innerText = message;
+        document.getElementById('toast-icon').innerText = icon;
+        toast.classList.remove('hidden');
+        toast.classList.add('flex');
+        clearTimeout(window._toastTimer);
+        window._toastTimer = setTimeout(() => {
+            toast.classList.add('hidden');
+            toast.classList.remove('flex');
+        }, 3500);
+    }
+
+    function getInitials(name) {
+        return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+    }
+
+    // =====================================================
+    //  AUTH TAB SWITCH
+    // =====================================================
+    function switchAuthTab(tab) {
+        const loginForm = document.getElementById('loginForm');
+        const signupForm = document.getElementById('signupForm');
+        const loginBtn = document.getElementById('tab-login-btn');
+        const signupBtn = document.getElementById('tab-signup-btn');
+
+        if (tab === 'login') {
+            loginForm.classList.remove('hidden');
+            signupForm.classList.add('hidden');
+            loginBtn.className = 'flex-1 py-2.5 rounded-lg text-sm font-semibold text-red-400 bg-red-600/20 transition';
+            signupBtn.className = 'flex-1 py-2.5 rounded-lg text-sm font-semibold text-gray-400 transition';
+        } else {
+            loginForm.classList.add('hidden');
+            signupForm.classList.remove('hidden');
+            signupBtn.className = 'flex-1 py-2.5 rounded-lg text-sm font-semibold text-red-400 bg-red-600/20 transition';
+            loginBtn.className = 'flex-1 py-2.5 rounded-lg text-sm font-semibold text-gray-400 transition';
+        }
+    }
+
+    // =====================================================
+    //  LOGIN
+    // =====================================================
+    function handleLogin(e) {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+        const password = document.getElementById('loginPassword').value;
+        const errEl = document.getElementById('loginError');
+
+        allUsers = loadUsers();
+        const user = allUsers.find(u => u.email.toLowerCase() === email && u.password === password);
+
+        if (!user) {
+            errEl.innerText = '❌ Invalid email or password.';
+            errEl.classList.remove('hidden');
+            return;
+        }
+
+        errEl.classList.add('hidden');
+        currentUser = user;
+        startApp(user);
+    }
+
+    // =====================================================
+    //  SIGNUP
+    // =====================================================
+    function handleSignup(e) {
+        e.preventDefault();
+        const name = document.getElementById('signupName').value.trim();
+        const email = document.getElementById('signupEmail').value.trim().toLowerCase();
+        const phone = document.getElementById('signupPhone').value.trim();
+        const password = document.getElementById('signupPassword').value;
+        const deposit = parseFloat(document.getElementById('signupDeposit').value) || 0;
+        const errEl = document.getElementById('signupError');
+
+        allUsers = loadUsers();
+
+        if (allUsers.some(u => u.email.toLowerCase() === email)) {
+            errEl.innerText = '❌ Email already registered. Please login.';
+            errEl.classList.remove('hidden');
+            return;
+        }
+
+        const newUser = {
+            id: 'user-' + Date.now(),
+            name, email, phone, password,
+            balance: deposit,
+            role: 'user',
+            joined: new Date().toISOString().split('T')[0],
+            transactions: deposit > 0
+                ? [{ title: 'Initial Deposit', amount: deposit, time: 'Just now' }]
+                : []
+        };
+
+        allUsers.push(newUser);
+        saveUsers(allUsers);
+
+        errEl.classList.add('hidden');
+        currentUser = newUser;
+        showToast(`Welcome ${name}! Account created with ${formatINR(deposit)}`, '🎉');
+        startApp(newUser);
+    }
+
+    // =====================================================
+    //  START APP AFTER LOGIN
+    // =====================================================
+    function startApp(user) {
+        document.getElementById('authScreen').classList.add('hidden');
+        document.getElementById('appContainer').classList.remove('hidden');
+
+        // Sidebar profile
+        document.getElementById('sidebar-avatar').innerText = getInitials(user.name);
+        document.getElementById('sidebar-name').innerText = user.name;
+        const roleEl = document.getElementById('sidebar-role');
+        if (user.role === 'admin') {
+            roleEl.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse"></span> Administrator';
+            roleEl.className = 'text-xs text-yellow-400 flex items-center gap-1';
+            document.getElementById('nav-admin').classList.remove('hidden');
+        } else {
+            roleEl.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span> Verified User';
+            roleEl.className = 'text-xs text-red-400 flex items-center gap-1';
+            document.getElementById('nav-admin').classList.add('hidden');
+        }
+
+        // Balance & transactions
+        updateBalanceDisplay();
+        renderTransactions();
+        refreshUsersTable();
+        updateAdminStats();
+
+        // Default tab
+        switchTab('dashboard');
+        showToast(`Welcome back, ${user.name.split(' ')[0]}! 👋`, '👋');
+    }
+
+    // =====================================================
+    //  LOGOUT
+    // =====================================================
+    function handleLogout() {
+        if (!confirm('Are you sure you want to logout?')) return;
+        currentUser = null;
+        document.getElementById('appContainer').classList.add('hidden');
+        document.getElementById('authScreen').classList.remove('hidden');
+        document.getElementById('loginPassword').value = '';
+        switchAuthTab('login');
+        showToast('Logged out successfully.', '👋');
+    }
+
+    // =====================================================
+    //  SIDEBAR & TAB
+    // =====================================================
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('-translate-x-full');
+    }
+
+    function switchTab(tab) {
+        const dashTab = document.getElementById('tab-dashboard');
+        const adminTab = document.getElementById('tab-admin');
+        const navDash = document.getElementById('nav-dashboard');
+        const navAdmin = document.getElementById('nav-admin');
+        const pageTitle = document.getElementById('page-title');
+
+        if (tab === 'dashboard') {
+            dashTab.classList.remove('hidden');
+            adminTab.classList.add('hidden');
+            navDash.classList.add('tab-btn-active');
+            navAdmin.classList.remove('tab-btn-active');
+            pageTitle.innerText = 'Wallet Dashboard';
+        } else if (tab === 'admin') {
+            if (currentUser.role !== 'admin') {
+                showToast('Access denied. Admin only.', '🔒');
+                return;
+            }
+            dashTab.classList.add('hidden');
+            adminTab.classList.remove('hidden');
+            navAdmin.classList.add('tab-btn-active');
+            navDash.classList.remove('tab-btn-active');
+            pageTitle.innerText = 'Admin Control Panel';
+            refreshUsersTable();
+            updateAdminStats();
+        }
+
+        if (window.innerWidth < 768 && !document.getElementById('sidebar').classList.contains('-translate-x-full')) {
+            toggleSidebar();
+        }
+    }
+
+    // =====================================================
+    //  BALANCE & TRANSACTIONS
+    // =====================================================
+    function updateBalanceDisplay() {
+        if (!currentUser) return;
+        document.getElementById('display-balance').innerText = formatINR(currentUser.balance);
+    }
+
+    function renderTransactions() {
+        const container = document.getElementById('transactions-list');
+        container.innerHTML = '';
+        const list = currentUser.transactions || [];
+
+        if (list.length === 0) {
+            container.innerHTML = '<p class="text-xs text-gray-500 text-center py-6">No transactions yet.</p>';
+            return;
+        }
+
+        list.slice().reverse().forEach(tx => {
+            const isPos = tx.amount > 0;
+            const color = isPos ? 'text-green-400' : 'text-red-400';
+            const bg = isPos
+                ? 'bg-green-500/20 text-green-400 border-green-500/20'
+                : 'bg-red-500/20 text-red-400 border-red-500/20';
+            const arrow = isPos
+                ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>'
                 : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>';
 
             const div = document.createElement('div');
             div.className = 'flex justify-between items-center p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.06] transition';
             div.innerHTML = `
                 <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-lg ${bgClass} flex items-center justify-center border">
+                    <div class="w-10 h-10 rounded-lg ${bg} flex items-center justify-center border">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">${arrow}</svg>
                     </div>
                     <div>
-                        <h4 class="font-semibold text-xs md:text-sm text-white">${title}</h4>
-                        <span class="text-[10px] text-gray-400">${time}</span>
+                        <h4 class="font-semibold text-xs md:text-sm text-white">${tx.title}</h4>
+                        <span class="text-[10px] text-gray-400">${tx.time}</span>
                     </div>
                 </div>
-                <span class="${colorClass} font-bold text-xs md:text-sm">${isPositive ? '+' : ''}${formatINR(amount)}</span>
+                <span class="${color} font-bold text-xs md:text-sm">${isPos ? '+' : ''}${formatINR(tx.amount)}</span>
             `;
-            container.prepend(div);
+            container.appendChild(div);
+        });
+    }
 
-            // Keep max 8 transactions visible
-            while (container.children.length > 8) {
-                container.removeChild(container.lastChild);
-            }
+    function addTransaction(title, amount, time) {
+        currentUser.transactions = currentUser.transactions || [];
+        currentUser.transactions.push({ title, amount, time });
+        saveCurrentUser();
+        renderTransactions();
+    }
+
+    function saveCurrentUser() {
+        const idx = allUsers.findIndex(u => u.id === currentUser.id);
+        if (idx !== -1) {
+            allUsers[idx] = currentUser;
+            saveUsers(allUsers);
+        }
+    }
+
+    // =====================================================
+    //  DEPOSIT (DEMO)
+    // =====================================================
+    function depositDemo() {
+        if (!currentUser) return;
+        const amt = 25000;
+        currentUser.balance += amt;
+        addTransaction('Demo Deposit', amt, 'Just now');
+        updateBalanceDisplay();
+        saveCurrentUser();
+        showToast(`Demo deposit of ${formatINR(amt)} added.`, '✅');
+    }
+
+    // =====================================================
+    //  WITHDRAW
+    // =====================================================
+    function openWithdrawModal() {
+        if (!currentUser) return;
+        document.getElementById('withdrawModal').classList.remove('hidden');
+        document.getElementById('withdrawModal').classList.add('flex');
+        document.getElementById('modal-min-limit').innerText = formatINR(minLimit);
+        document.getElementById('withdraw-input').value = '';
+    }
+
+    function closeWithdrawModal() {
+        document.getElementById('withdrawModal').classList.remove('flex');
+        document.getElementById('withdrawModal').classList.add('hidden');
+    }
+
+    function handleWithdraw(e) {
+        e.preventDefault();
+        const amt = parseFloat(document.getElementById('withdraw-input').value);
+
+        if (isNaN(amt) || amt <= 0) {
+            showToast('Please enter a valid amount.', '⚠️');
+            return;
+        }
+        if (amt < minLimit) {
+            showToast(`Minimum withdrawal limit is ${formatINR(minLimit)}`, '⚠️');
+            return;
+        }
+        if (amt > currentUser.balance) {
+            showToast('Insufficient balance.', '❌');
+            return;
         }
 
-        // ---------- CLOSE MODAL ON OVERLAY CLICK ----------
-        document.getElementById('withdrawModal').addEventListener('click', function(e) {
-            if (e.target === this) closeWithdrawModal();
-        });
+        currentUser.balance -= amt;
+        addTransaction('Withdrawal Request', -amt, 'Just now');
+        updateBalanceDisplay();
+        saveCurrentUser();
+        closeWithdrawModal();
+        showToast(`Withdrawal of ${formatINR(amt)} submitted successfully.`, '✅');
+    }
 
-        // ---------- KEYBOARD ESC ----------
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') closeWithdrawModal();
-        });
+    // =====================================================
+    //  ADMIN: USERS TABLE
+    // =====================================================
+    function refreshUsersTable() {
+        if (!currentUser || currentUser.role !== 'admin') return;
+        allUsers = loadUsers();
+        const tbody = document.getElementById('users-table-body');
+        tbody.innerHTML = '';
 
-        // ---------- INIT ----------
-        window.addEventListener('DOMContentLoaded', () => {
+        allUsers.forEach(u => {
+            const roleColor = u.role === 'admin'
+                ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30'
+                : 'bg-green-500/20 text-green-400 border-green-500/30';
+            const tr = document.createElement('tr');
+            tr.className = 'border-b border-white/[0.05] user-row transition';
+            tr.innerHTML = `
+                <td class="p-3">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center text-red-400 border border-red-500/30 text-[10px] font-bold">${getInitials(u.name)}</div>
+                        <span class="font-semibold text-white">${u.name}</span>
+                    </div>
+                </td>
+                <td class="p-3 text-gray-400">${u.email}</td>
+                <td class="p-3 text-gray-400">${u.phone}</td>
+                <td class="p-3 font-bold text-green-400">${formatINR(u.balance)}</td>
+                <td class="p-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-semibold border ${roleColor}">${u.role.toUpperCase()}</span></td>
+                <td class="p-3 text-gray-400">${u.joined}</td>
+                <td class="p-3 text-right">
+                    <button onclick="adminAdjustUser('${u.id}', 1)" class="px-2 py-1 rounded-lg bg-green-500/20 text-green-400 border border-green-500/30 text-[10px] font-semibold hover:bg-green-500/30 mr-1">+ Add</button>
+                    <button onclick="adminAdjustUser('${u.id}', -1)" class="px-2 py-1 rounded-lg bg-red-500/20 text-red-400 border border-red-500/30 text-[10px] font-semibold hover:bg-red-500/30">- Deduct</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function adminAdjustUser(userId, sign) {
+        const amtStr = prompt(`Enter amount to ${sign === 1 ? 'ADD to' : 'DEDUCT from'} this user (₹):`);
+        if (!amtStr) return;
+        const amt = parseFloat(amtStr);
+        if (isNaN(amt) || amt <= 0) {
+            showToast('Invalid amount.', '⚠️');
+            return;
+        }
+
+        allUsers = loadUsers();
+        const user = allUsers.find(u => u.id === userId);
+        if (!user) return;
+
+        if (sign === -1 && amt > user.balance) {
+            showToast('Cannot deduct more than user balance.', '❌');
+            return;
+        }
+
+        user.balance += sign * amt;
+        user.transactions = user.transactions || [];
+        user.transactions.push({
+            title: sign === 1 ? 'Admin Credit' : 'Admin Debit',
+            amount: sign * amt,
+            time: 'Just now'
+        });
+        saveUsers(allUsers);
+
+        // If adjusting self (admin), sync currentUser
+        if (currentUser.id === userId) {
+            currentUser = user;
             updateBalanceDisplay();
-            document.getElementById('current-limit-display').innerText = formatINR(minLimit);
-            document.getElementById('modal-min-limit').innerText = formatINR(minLimit);
+            renderTransactions();
+        }
+
+        refreshUsersTable();
+        updateAdminStats();
+        showToast(`${sign === 1 ? 'Added' : 'Deducted'} ${formatINR(amt)} ${sign === 1 ? 'to' : 'from'} ${user.name}.`, '✅');
+    }
+
+    // =====================================================
+    //  ADMIN: STATS
+    // =====================================================
+    function updateAdminStats() {
+        if (!currentUser || currentUser.role !== 'admin') return;
+        allUsers = loadUsers();
+        const totalUsers = allUsers.length;
+        const totalDeposits = allUsers.reduce((sum, u) => {
+            return sum + (u.transactions || [])
+                .filter(t => t.amount > 0)
+                .reduce((s, t) => s + t.amount, 0);
+        }, 0);
+        const totalWithdrawn = allUsers.reduce((sum, u) => {
+            return sum + Math.abs((u.transactions || [])
+                .filter(t => t.amount < 0)
+                .reduce((s, t) => s + t.amount, 0));
+        }, 0);
+
+        document.getElementById('stat-total-users').innerText = totalUsers;
+        document.getElementById('stat-total-deposits').innerText = formatINR(totalDeposits);
+        document.getElementById('stat-total-withdrawn').innerText = formatINR(totalWithdrawn);
+        document.getElementById('stat-min-withdraw').innerText = formatINR(minLimit);
+    }
+
+    // =====================================================
+    //  ADMIN: SETTINGS
+    // =====================================================
+    function saveAdminSettings() {
+        const limit = parseFloat(document.getElementById('min-withdraw').value);
+        if (isNaN(limit) || limit < 0) {
+            showToast('Please enter a valid limit.', '⚠️');
+            return;
+        }
+        minLimit = limit;
+        localStorage.setItem('tg_minLimit', minLimit);
+        document.getElementById('current-limit-display').innerText = formatINR(minLimit);
+        document.getElementById('modal-min-limit').innerText = formatINR(minLimit);
+        updateAdminStats();
+        showToast(`Minimum withdrawal limi<script>
+    // =====================================================
+    //  PART 3: PREMIUM ENHANCEMENTS
+    // =====================================================
+
+    // ---------- 1. SEARCH USERS IN ADMIN ----------
+    function searchUsers(query) {
+        const tbody = document.getElementById('users-table-body');
+        if (!tbody) return;
+        const rows = tbody.querySelectorAll('tr');
+        const q = query.toLowerCase().trim();
+
+        rows.forEach(row => {
+            const text = row.innerText.toLowerCase();
+            row.style.display = (!q || text.includes(q)) ? '' : 'none';
         });
-    </script>
-</body>
-                                </html>
+    }
+
+    // ---------- 2. PASSWORD SHOW/HIDE TOGGLE ----------
+    function togglePassword(inputId, btn) {
+        const input = document.getElementById(inputId);
+        if (!input) return;
+        if (input.type === 'password') {
+            input.type = 'text';
+            btn.innerHTML = '🙈';
+        } else {
+            input.type = 'password';
+            btn.innerHTML = '👁️';
+        }
+    }
+
+    // ---------- 3. FORGOT PASSWORD (DEMO) ----------
+    function forgotPassword() {
+        const email = prompt('Enter your registered email:');
+        if (!email) return;
+        allUsers = loadUsers();
+        const user = allUsers.find(u => u.email.toLowerCase() === email.toLowerCase().trim());
+        if (user) {
+            showToast(`Password reset link sent to ${email} (demo).`, '📧');
+            // Demo: show password after 1s
+            setTimeout(() => {
+                showToast(`Demo: Your password is "${user.password}"`, '🔑');
+            }, 1500);
+        } else {
+            showToast('Email not found. Please sign up.', '❌');
+        }
+    }
+
+    // ---------- 4. USER DETAIL MODAL (Admin view) ----------
+    function showUserDetails(userId) {
+        allUsers = loadUsers();
+        const user = allUsers.find(u => u.id === userId);
+        if (!user) return;
+
+        const txList = (user.transactions || []).slice(-5).reverse().map(tx => {
+            const isPos = tx.amount > 0;
+            const color = isPos ? 'text-green-400' : 'text-red-400';
+            return `<div class="flex justify-between text-xs py-1.5 border-b border-white/5">
+                <span class="text-gray-300">${tx.title}</span>
+                <span class="${color} font-semibold">${isPos ? '+' : ''}${formatINR(tx.amount)}</span>
+            </div>`;
+        }).join('') || '<p class="text-xs text-gray-500 py-2">No transactions.</p>';
+
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-[95]';
+        modal.innerHTML = `
+            <div class="glass-modal w-full max-w-md p-6 rounded-3xl border border-red-500/40">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold text-red-400">User Details</h3>
+                    <button onclick="this.closest('.fixed').remove()" class="text-gray-400 hover:text-white text-2xl leading-none">&times;</button>
+                </div>
+                <div class="flex items-center gap-3 mb-4 p-3 glass-card rounded-xl">
+                    <div class="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center text-red-400 border border-red-500/30 font-bold">${getInitials(user.name)}</div>
+                    <div>
+                        <h4 class="font-bold text-white">${user.name}</h4>
+                        <p class="text-[10px] text-gray-400">${user.email} • ${user.role.toUpperCase()}</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-2 mb-4 text-xs">
+                    <div class="bg-white/5 rounded-lg p-2.5"><p class="text-[10px] text-gray-400">Phone</p><p class="text-white font-semibold mt-0.5">${user.phone}</p></div>
+                    <div class="bg-white/5 rounded-lg p-2.5"><p class="text-[10px] text-gray-400">Joined</p><p class="text-white font-semibold mt-0.5">${user.joined}</p></div>
+                    <div class="bg-white/5 rounded-lg p-2.5 col-span-2"><p class="text-[10px] text-gray-400">Balance</p><p class="text-green-400 font-bold text-base mt-0.5">${formatINR(user.balance)}</p></div>
+                </div>
+                <h4 class="text-xs font-semibold text-red-400 mb-2">Recent Transactions</h4>
+                <div class="max-h-40 overflow-y-auto">${txList}</div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+    }
+
+    // ---------- 5. REAL-TIME SYNC (cross-tab) ----------
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'tg_users' && currentUser) {
+            allUsers = loadUsers();
+            const updated = allUsers.find(u => u.id === currentUser.id);
+            if (updated) {
+                currentUser = updated;
+                updateBalanceDisplay();
+                renderTransactions();
+            }
+            if (currentUser.role === 'admin') {
+                refreshUsersTable();
+                updateAdminStats();
+            }
+        }
+    });
+
+    // ---------- 6. ENHANCED SIGNUP PASSWORD STRENGTH ----------
+    const pwdInput = document.getElementById('signupPassword');
+    if (pwdInput) {
+        pwdInput.addEventListener('input', function() {
+            const v = this.value;
+            let strength = 0;
+            if (v.length >= 6) strength++;
+            if (v.length >= 10) strength++;
+            if (/[A-Z]/.test(v)) strength++;
+            if (/[0-9]/.test(v)) strength++;
+            if (/[^A-Za-z0-9]/.test(v)) strength++;
+
+            const colors = ['bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-lime-500', 'bg-green-500'];
+            const labels = ['Very Weak', 'Weak', 'Fair', 'Good', 'Strong'];
+            const idx = Math.max(0, Math.min(4, strength - 1));
+
+            let bar = document.getElementById('pwd-strength-bar');
+            if (!bar) {
+                bar = document.createElement('div');
+                bar.id = 'pwd-strength-bar';
+                bar.className = 'mt-1.5 flex items-center gap-2';
+                this.parentNode.appendChild(bar);
+            }
+            if (!v) { bar.innerHTML = ''; return; }
+            bar.innerHTML = `
+                <div class="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                    <div class="h-full ${colors[idx]} transition-all duration-300" style="width:${(idx+1)*20}%"></div>
+                </div>
+                <span class="text-[10px] text-gray-400">${labels[idx]}</span>
+            `;
+        });
+    }
+
+    // ---------- 7. ADD SEARCH + FORGOT PASSWORD TO UI DYNAMICALLY ----------
+    window.addEventListener('DOMContentLoaded', () => {
+        // Add search input to admin users table header
+        const tableHeader = document.querySelector('#users-table-body')?.closest('.glass-card')?.querySelector('.p-4.border-b');
+        if (tableHeader) {
+            const searchWrapper = document.createElement('div');
+            searchWrapper.className = 'flex items-center gap-2';
+            searchWrapper.innerHTML = `
+                <input type="text" placeholder="🔍 Search users..." oninput="searchUsers(this.value)"
+                    class="input-glass rounded-lg px-3 py-1.5 text-xs text-white placeholder-gray-500 w-40 md:w-56">
+            `;
+            const refreshBtn = tableHeader.querySelector('button');
+            if (refreshBtn) tableHeader.insertBefore(searchWrapper, refreshBtn);
+        }
+
+        // Add forgot password link to login form
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm) {
+            const forgotLink = document.createElement('p');
+            forgotLink.className = 'text-[10px] text-center text-gray-500 hover:text-red-400 cursor-pointer transition';
+            forgotLink.innerText = 'Forgot Password?';
+            forgotLink.onclick = forgotPassword;
+            const submitBtn = loginForm.querySelector('button[type="submit"]');
+            if (submitBtn) loginForm.insertBefore(forgotLink, submitBtn.nextSibling);
+        }
+
+        // Add password toggle to login & signup
+        [['loginPassword', 'loginEmail'], ['signupPassword', 'signupEmail']].forEach(([pwdId, _]) => {
+            const inp = document.getElementById(pwdId);
+            if (!inp) return;
+            const wrapper = document.createElement('div');
+            wrapper.className = 'relative';
+            inp.parentNode.insertBefore(wrapper, inp);
+            wrapper.appendChild(inp);
+            inp.classList.add('pr-10');
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.innerHTML = '👁️';
+            btn.className = 'absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-400 text-sm';
+            btn.onclick = () => togglePassword(pwdId, btn);
+            wrapper.appendChild(btn);
+        });
+
+        // Add "View Details" button to user rows (admin table)
+        const observer = new MutationObserver(() => {
+            document.querySelectorAll('#users-table-body tr').forEach(row => {
+                if (row.dataset.enhanced) return;
+                row.dataset.enhanced = 'true';
+                const nameCell = row.querySelector('td:first-child span');
+                if (nameCell) {
+                    nameCell.style.cursor = 'pointer';
+                    nameCell.classList.add('hover:text-red-400', 'transition');
+                    nameCell.onclick = () => {
+                        const addBtn = row.querySelector('button[onclick*="adminAdjustUser"]');
+                        if (addBtn) {
+                            const match = addBtn.getAttribute('onclick').match(/'([^']+)'/);
+                            if (match) showUserDetails(match[1]);
+                        }
+                    };
+                }
+            });
+        });
+        const tbody = document.getElementById('users-table-body');
+        if (tbody) observer.observe(tbody, { childList: true, subtree: true });
+    });
+
+    // ---------- 8. SMOOTH ANIMATIONS FOR TAB SWITCHES ----------
+    const originalSwitchTab = window.switchTab;
+    window.switchTab = function(tab) {
+        originalSwitchTab(tab);
+        const active = document.getElementById(`tab-${tab}`);
+        if (active) {
+            active.style.opacity = '0';
+            active.style.transform = 'translateY(10px)';
+            requestAnimationFrame(() => {
+                active.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                active.style.opacity = '1';
+                active.style.transform = 'translateY(0)';
+            });
+        }
+    };
+
+    // ---------- 9. KEYBOARD SHORTCUTS ----------
+    document.addEventListener('keydown', (e) => {
+        // Ctrl+K = focus search
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+            e.preventDefault();
+            const search = document.querySelector('#tab-admin input[type="text"]');
+            if (search) search.focus();
+        }
+        // Ctrl+Shift+A = go to admin panel
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'A') {
+            e.preventDefault();
+            if (currentUser && currentUser.role === 'admin') switchTab('admin');
+        }
+    });
+
+    // ---------- 10. SESSION PERSISTENCE ----------
+    // Auto-login if session exists (refresh keeps user logged in)
+    window.addEventListener('DOMContentLoaded', () => {
+        const savedSession = sessionStorage.getItem('tg_session');
+        if (savedSession) {
+            try {
+                const sessionData = JSON.parse(savedSession);
+                allUsers = loadUsers();
+                const user = allUsers.find(u => u.id === sessionData.id);
+                if (user) {
+                    currentUser = user;
+                    startApp(user);
+                    return;
+                }
+            } catch (err) {}
+        }
+    });
+
+    // Save session on login/signup
+    const originalStartApp = window.startApp;
+    window.startApp = function(user) {
+        sessionStorage.setItem('tg_session', JSON.stringify({ id: user.id, email: user.email }));
+        originalStartApp(user);
+    };
+
+    // Clear session on logout
+    const originalLogout = window.handleLogout;
+    window.handleLogout = function() {
+        sessionStorage.removeItem('tg_session');
+        originalLogout();
+    };
+
+    console.log('%c✅ Trust Gateway Premium loaded!','color:#ef4444;font-weight:bold;font-size:14px;');
+    console.log('%cAdmin: admin@trustgateway.in / admin123','color:#94a3b8;font-size:12px;');
+</script>
